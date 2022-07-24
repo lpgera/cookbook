@@ -25,4 +25,30 @@ export default gql`
     recipes: [Recipe!]!
     recipe(id: Int!): Recipe!
   }
+
+  input RecipeInput {
+    name: String!
+    description: String
+    instructions: String
+  }
+
+  input IngredientInput {
+    name: String!
+    amount: String!
+  }
+
+  enum IngredientMoveDirection {
+    UP
+    DOWN
+  }
+
+  type Mutation {
+    addRecipe(recipe: RecipeInput): Recipe!
+    updateRecipe(id: Int!, recipe: RecipeInput): Recipe!
+    deleteRecipe(id: Int!): Recipe!
+    addIngredient(recipeId: Int!, ingredient: IngredientInput!): Ingredient!
+    updateIngredient(id: Int!, ingredient: IngredientInput!): Ingredient!
+    deleteIngredient(id: Int!): Ingredient!
+    moveIngredient(id: Int!, direction: IngredientMoveDirection!): Ingredient!
+  }
 `
