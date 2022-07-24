@@ -1,55 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-import type { Ingredient } from '@prisma/client'
-import { ApolloServer, gql } from 'apollo-server'
-
-const prisma = new PrismaClient()
-
-const typeDefs = gql`
-  type Recipe {
-    id: Int!
-    createdAt: String!
-    updatedAt: String!
-    name: String!
-    description: String
-    instructions: String
-    ingredients: [Ingredient!]!
-  }
-
-  type Ingredient {
-    id: Int!
-    createdAt: String!
-    updatedAt: String!
-    recipe: Recipe!
-    name: String!
-    amount: String!
-    order: Int!
-  }
-
-  type Query {
-    recipes: [Recipe!]!
-  }
-`
-
-const resolvers = {
-  Ingredient: {
-    recipe: ({ recipeId }: Ingredient) => {
-      return prisma.recipe.findFirst({
-        where: {
-          id: recipeId,
-        },
-      })
-    },
-  },
-  Query: {
-    recipes: () => {
-      return prisma.recipe.findMany({
-        include: {
-          ingredients: true,
-        },
-      })
-    },
-  },
-}
+import { ApolloServer } from 'apollo-server'
+import typeDefs from './graphql/typeDefs'
+import resolvers from './graphql/resolvers'
 
 const server = new ApolloServer({ resolvers, typeDefs })
 
