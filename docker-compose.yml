@@ -1,0 +1,23 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=cookbook
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:${ADMINER_PORT:-8080}
+  backend:
+    image: node:18
+    restart: unless-stopped
+    working_dir: /opt/app
+    volumes:
+      - .:/opt/app
+volumes:
+  postgres_data:
