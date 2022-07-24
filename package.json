@@ -1,0 +1,9 @@
+{
+  "name": "cookbook",
+  "version": "1.0.0",
+  "description": "A simple cookbook application",
+  "scripts": {
+  },
+  "author": "lpgera",
+  "license": "MIT"
+}
