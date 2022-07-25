@@ -1,0 +1,16 @@
+schema: http://localhost:4000/graphql
+overwrite: true
+hooks:
+  afterAllFileWrite:
+    - prettier --write
+generates:
+  ./graphql/resolvers.gen.ts:
+    config:
+      useIndexSignature: true
+      maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null> : T | null' # https://github.com/dotansimha/graphql-code-generator/issues/3174#issuecomment-595398571
+      mappers:
+        Recipe: ./typeMappings#PrismaRecipe
+        Ingredient: ./typeMappings#PrismaIngredient
+    plugins:
+      - typescript
+      - typescript-resolvers

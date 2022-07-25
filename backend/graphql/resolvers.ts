@@ -1,23 +1,8 @@
 import { Ingredient, PrismaClient } from '@prisma/client'
+import { GraphQLScalarType, Kind } from 'graphql'
+import { IngredientMoveDirection, Resolvers } from './resolvers.gen'
 
 const prisma = new PrismaClient()
-
-// TODO use graphql-codegen to generate these types
-type RecipeInput = {
-  name: string
-  description?: string
-  instructions?: string
-}
-
-type IngredientInput = {
-  name: string
-  amount: string
-}
-
-enum IngredientMoveDirection {
-  UP = 'UP',
-  DOWN = 'DOWN',
-}
 
 async function swapIngredients(
   ingredients: Ingredient[],
@@ -47,52 +32,62 @@ async function swapIngredients(
 }
 
 export default {
+  Date: new GraphQLScalarType<Date, string>({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue(value) {
+      return new Date(value as string)
+    },
+    serialize(value) {
+      return new Date(value as string).toISOString()
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.STRING) {
+        return new Date(ast.value)
+      }
+      return new Date()
+    },
+  }),
   Ingredient: {
-    recipe: ({ recipeId }: Ingredient) => {
+    recipe: ({ recipeId: id }) => {
       return prisma.recipe.findFirstOrThrow({
         where: {
-          id: recipeId,
+          id,
+        },
+      })
+    },
+  },
+  Recipe: {
+    ingredients({ id: recipeId }) {
+      return prisma.ingredient.findMany({
+        where: {
+          recipeId,
+        },
+        orderBy: {
+          order: 'asc',
         },
       })
     },
   },
   Query: {
     recipes: () => {
-      return prisma.recipe.findMany({
-        include: {
-          ingredients: {
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
-      })
+      return prisma.recipe.findMany()
     },
-    recipe: (_: never, { id }: { id: number }) => {
+    recipe: (_, { id }) => {
       return prisma.recipe.findFirstOrThrow({
         where: {
           id,
-        },
-        include: {
-          ingredients: {
-            orderBy: {
-              order: 'asc',
-            },
-          },
         },
       })
     },
   },
   Mutation: {
-    addRecipe(_: never, { recipe }: { recipe: RecipeInput }) {
+    addRecipe(_, { recipe }) {
       return prisma.recipe.create({
         data: recipe,
       })
     },
-    updateRecipe(
-      _: never,
-      { id, recipe }: { id: number; recipe: RecipeInput }
-    ) {
+    updateRecipe(_, { id, recipe }) {
       return prisma.recipe.update({
         where: {
           id,
@@ -100,27 +95,14 @@ export default {
         data: recipe,
       })
     },
-    deleteRecipe(_: never, { id }: { id: number }) {
+    deleteRecipe(_, { id }) {
       return prisma.recipe.delete({
         where: {
           id,
         },
-        include: {
-          ingredients: {
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
       })
     },
-    async addIngredient(
-      _: never,
-      {
-        recipeId,
-        ingredient,
-      }: { recipeId: number; ingredient: IngredientInput }
-    ) {
+    async addIngredient(_, { recipeId, ingredient }) {
       const {
         _max: { order: maxOrder },
       } = await prisma.ingredient.aggregate({
@@ -139,39 +121,24 @@ export default {
           order,
           ...ingredient,
         },
-        include: {
-          recipe: true,
-        },
       })
     },
-    updateIngredient(
-      _: never,
-      { id, ingredient }: { id: number; ingredient: IngredientInput }
-    ) {
+    updateIngredient(_, { id, ingredient }) {
       return prisma.ingredient.update({
         where: {
           id,
         },
         data: ingredient,
-        include: {
-          recipe: true,
-        },
       })
     },
-    deleteIngredient(_: never, { id }: { id: number }) {
+    deleteIngredient(_, { id }) {
       return prisma.ingredient.delete({
         where: {
           id,
         },
-        include: {
-          recipe: true,
-        },
       })
     },
-    async moveIngredient(
-      _: never,
-      { id, direction }: { id: number; direction: IngredientMoveDirection }
-    ) {
+    async moveIngredient(_, { id, direction }) {
       const { recipeId } = await prisma.ingredient.findFirstOrThrow({
         where: {
           id,
@@ -192,11 +159,11 @@ export default {
 
       const index = ingredients.findIndex(({ id: _id }) => _id === id)
 
-      if (direction === IngredientMoveDirection.UP && index > 0) {
+      if (direction === IngredientMoveDirection.Up && index > 0) {
         await swapIngredients(ingredients, index - 1, index)
       }
       if (
-        direction === IngredientMoveDirection.DOWN &&
+        direction === IngredientMoveDirection.Down &&
         index < ingredients.length - 1
       ) {
         await swapIngredients(ingredients, index, index + 1)
@@ -209,4 +176,4 @@ export default {
       })
     },
   },
-}
+} as Resolvers

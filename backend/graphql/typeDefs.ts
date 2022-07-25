@@ -1,10 +1,12 @@
 import { gql } from 'apollo-server'
 
 export default gql`
+  scalar Date
+
   type Recipe {
     id: Int!
-    createdAt: String!
-    updatedAt: String!
+    createdAt: Date!
+    updatedAt: Date!
     name: String!
     description: String
     instructions: String
@@ -13,8 +15,9 @@ export default gql`
 
   type Ingredient {
     id: Int!
-    createdAt: String!
-    updatedAt: String!
+    createdAt: Date!
+    updatedAt: Date!
+    recipeId: Int!
     recipe: Recipe!
     name: String!
     amount: String!
@@ -43,8 +46,8 @@ export default gql`
   }
 
   type Mutation {
-    addRecipe(recipe: RecipeInput): Recipe!
-    updateRecipe(id: Int!, recipe: RecipeInput): Recipe!
+    addRecipe(recipe: RecipeInput!): Recipe!
+    updateRecipe(id: Int!, recipe: RecipeInput!): Recipe!
     deleteRecipe(id: Int!): Recipe!
     addIngredient(recipeId: Int!, ingredient: IngredientInput!): Ingredient!
     updateIngredient(id: Int!, ingredient: IngredientInput!): Ingredient!
