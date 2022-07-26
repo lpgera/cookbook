@@ -20,7 +20,16 @@ services:
     command: npm run dev -w backend
     volumes:
       - .:/opt/app
+  frontend:
+    image: node:18
+    restart: unless-stopped
+    working_dir: /opt/app
+    command: npm run start -w frontend
+    volumes:
+      - .:/opt/app
     ports:
-      - 4000:${PORT:-4000}
+      - 3000:3000
+    environment:
+      - BACKEND_URL=http://backend:4000
 volumes:
   postgres_data:
