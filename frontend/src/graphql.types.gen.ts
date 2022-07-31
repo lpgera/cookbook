@@ -33,50 +33,23 @@ export type Ingredient = {
 
 export type IngredientInput = {
   amount: Scalars['String']
+  id?: InputMaybe<Scalars['Int']>
   name: Scalars['String']
-}
-
-export enum IngredientMoveDirection {
-  Down = 'DOWN',
-  Up = 'UP',
 }
 
 export type Mutation = {
   __typename?: 'Mutation'
-  addIngredient: Ingredient
   addRecipe: Recipe
-  deleteIngredient: Ingredient
   deleteRecipe: Recipe
-  moveIngredient: Ingredient
-  updateIngredient: Ingredient
   updateRecipe: Recipe
-}
-
-export type MutationAddIngredientArgs = {
-  ingredient: IngredientInput
-  recipeId: Scalars['Int']
 }
 
 export type MutationAddRecipeArgs = {
   recipe: RecipeInput
 }
 
-export type MutationDeleteIngredientArgs = {
-  id: Scalars['Int']
-}
-
 export type MutationDeleteRecipeArgs = {
   id: Scalars['Int']
-}
-
-export type MutationMoveIngredientArgs = {
-  direction: IngredientMoveDirection
-  id: Scalars['Int']
-}
-
-export type MutationUpdateIngredientArgs = {
-  id: Scalars['Int']
-  ingredient: IngredientInput
 }
 
 export type MutationUpdateRecipeArgs = {
@@ -97,16 +70,17 @@ export type QueryRecipeArgs = {
 export type Recipe = {
   __typename?: 'Recipe'
   createdAt: Scalars['Date']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
   id: Scalars['Int']
   ingredients: Array<Ingredient>
-  instructions?: Maybe<Scalars['String']>
+  instructions: Scalars['String']
   name: Scalars['String']
   updatedAt: Scalars['Date']
 }
 
 export type RecipeInput = {
-  description?: InputMaybe<Scalars['String']>
-  instructions?: InputMaybe<Scalars['String']>
+  description: Scalars['String']
+  ingredients: Array<IngredientInput>
+  instructions: Scalars['String']
   name: Scalars['String']
 }

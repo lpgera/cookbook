@@ -8,8 +8,8 @@ export default gql`
     createdAt: Date!
     updatedAt: Date!
     name: String!
-    description: String
-    instructions: String
+    description: String!
+    instructions: String!
     ingredients: [Ingredient!]!
   }
 
@@ -29,29 +29,22 @@ export default gql`
     recipe(id: Int!): Recipe!
   }
 
-  input RecipeInput {
-    name: String!
-    description: String
-    instructions: String
-  }
-
   input IngredientInput {
+    id: Int
     name: String!
     amount: String!
   }
 
-  enum IngredientMoveDirection {
-    UP
-    DOWN
+  input RecipeInput {
+    name: String!
+    description: String!
+    instructions: String!
+    ingredients: [IngredientInput!]!
   }
 
   type Mutation {
     addRecipe(recipe: RecipeInput!): Recipe!
     updateRecipe(id: Int!, recipe: RecipeInput!): Recipe!
     deleteRecipe(id: Int!): Recipe!
-    addIngredient(recipeId: Int!, ingredient: IngredientInput!): Ingredient!
-    updateIngredient(id: Int!, ingredient: IngredientInput!): Ingredient!
-    deleteIngredient(id: Int!): Ingredient!
-    moveIngredient(id: Int!, direction: IngredientMoveDirection!): Ingredient!
   }
 `

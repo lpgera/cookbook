@@ -46,50 +46,23 @@ export type Ingredient = {
 
 export type IngredientInput = {
   amount: Scalars['String']
+  id?: InputMaybe<Scalars['Int']>
   name: Scalars['String']
-}
-
-export enum IngredientMoveDirection {
-  Down = 'DOWN',
-  Up = 'UP',
 }
 
 export type Mutation = {
   __typename?: 'Mutation'
-  addIngredient: Ingredient
   addRecipe: Recipe
-  deleteIngredient: Ingredient
   deleteRecipe: Recipe
-  moveIngredient: Ingredient
-  updateIngredient: Ingredient
   updateRecipe: Recipe
-}
-
-export type MutationAddIngredientArgs = {
-  ingredient: IngredientInput
-  recipeId: Scalars['Int']
 }
 
 export type MutationAddRecipeArgs = {
   recipe: RecipeInput
 }
 
-export type MutationDeleteIngredientArgs = {
-  id: Scalars['Int']
-}
-
 export type MutationDeleteRecipeArgs = {
   id: Scalars['Int']
-}
-
-export type MutationMoveIngredientArgs = {
-  direction: IngredientMoveDirection
-  id: Scalars['Int']
-}
-
-export type MutationUpdateIngredientArgs = {
-  id: Scalars['Int']
-  ingredient: IngredientInput
 }
 
 export type MutationUpdateRecipeArgs = {
@@ -110,17 +83,18 @@ export type QueryRecipeArgs = {
 export type Recipe = {
   __typename?: 'Recipe'
   createdAt: Scalars['Date']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
   id: Scalars['Int']
   ingredients: Array<Ingredient>
-  instructions?: Maybe<Scalars['String']>
+  instructions: Scalars['String']
   name: Scalars['String']
   updatedAt: Scalars['Date']
 }
 
 export type RecipeInput = {
-  description?: InputMaybe<Scalars['String']>
-  instructions?: InputMaybe<Scalars['String']>
+  description: Scalars['String']
+  ingredients: Array<IngredientInput>
+  instructions: Scalars['String']
   name: Scalars['String']
 }
 
@@ -238,7 +212,6 @@ export type ResolversTypes = ResolversObject<{
   Date: ResolverTypeWrapper<Scalars['Date']>
   Ingredient: ResolverTypeWrapper<PrismaIngredient>
   IngredientInput: IngredientInput
-  IngredientMoveDirection: IngredientMoveDirection
   Int: ResolverTypeWrapper<Scalars['Int']>
   Mutation: ResolverTypeWrapper<{}>
   Query: ResolverTypeWrapper<{}>
@@ -285,41 +258,17 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
-  addIngredient?: Resolver<
-    ResolversTypes['Ingredient'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationAddIngredientArgs, 'ingredient' | 'recipeId'>
-  >
   addRecipe?: Resolver<
     ResolversTypes['Recipe'],
     ParentType,
     ContextType,
     RequireFields<MutationAddRecipeArgs, 'recipe'>
   >
-  deleteIngredient?: Resolver<
-    ResolversTypes['Ingredient'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationDeleteIngredientArgs, 'id'>
-  >
   deleteRecipe?: Resolver<
     ResolversTypes['Recipe'],
     ParentType,
     ContextType,
     RequireFields<MutationDeleteRecipeArgs, 'id'>
-  >
-  moveIngredient?: Resolver<
-    ResolversTypes['Ingredient'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationMoveIngredientArgs, 'direction' | 'id'>
-  >
-  updateIngredient?: Resolver<
-    ResolversTypes['Ingredient'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateIngredientArgs, 'id' | 'ingredient'>
   >
   updateRecipe?: Resolver<
     ResolversTypes['Recipe'],
@@ -347,22 +296,14 @@ export type RecipeResolvers<
   ParentType extends ResolversParentTypes['Recipe'] = ResolversParentTypes['Recipe']
 > = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
-  description?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   ingredients?: Resolver<
     Array<ResolversTypes['Ingredient']>,
     ParentType,
     ContextType
   >
-  instructions?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
+  instructions?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>

@@ -1,17 +1,23 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { RecipesQuery } from './Recipes.types.gen'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Recipes() {
-  const { loading, error, data } = useQuery<RecipesQuery>(gql`
-    query Recipes {
-      recipes {
-        id
-        name
+  const navigate = useNavigate()
+  const { loading, error, data } = useQuery<RecipesQuery>(
+    gql`
+      query Recipes {
+        recipes {
+          id
+          name
+        }
       }
+    `,
+    {
+      nextFetchPolicy: 'cache-and-network',
     }
-  `)
+  )
 
   if (loading) {
     return <p>Loading...</p>
@@ -24,9 +30,12 @@ function Recipes() {
 
   return (
     <>
+      <p>
+        <button onClick={() => navigate('new')}>➕</button>
+      </p>
       {recipes.map((r, index) => (
         <div key={index}>
-          <Link to={`/recipe/${r.id}`}>{r.name}</Link>
+          <Link to={`${r.id}`}>{r.name}</Link>
         </div>
       ))}
     </>

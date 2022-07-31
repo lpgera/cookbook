@@ -1,10 +1,12 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
-import { gql, useQuery } from '@apollo/client'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 
 const Recipe = () => {
-  const { id } = useParams()
+  const { id: rawId } = useParams()
+  const id = parseInt(rawId ?? '0')
+  const navigate = useNavigate()
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
     gql`
       query Recipe($id: Int!) {
@@ -24,10 +26,18 @@ const Recipe = () => {
     `,
     {
       variables: {
-        id: parseInt(id ?? '0'),
+        id,
       },
+      nextFetchPolicy: 'cache-and-network',
     }
   )
+  const [deleteRecipe] = useMutation(gql`
+    mutation DeleteRecipe($id: Int!) {
+      deleteRecipe(id: $id) {
+        id
+      }
+    }
+  `)
 
   if (loading) {
     return <p>Loading...</p>
@@ -38,6 +48,7 @@ const Recipe = () => {
 
   return (
     <>
+      <Link to={'/'}>Recipes</Link>
       <h2>{data.recipe.name}</h2>
       <p>{data.recipe.description}</p>
       <h3>Ingredients</h3>
@@ -57,6 +68,26 @@ const Recipe = () => {
             <br />
           </React.Fragment>
         ))}
+      </p>
+      <p>
+        <button onClick={() => navigate('edit')}>✏️</button>
+        &nbsp;
+        <button
+          onClick={async () => {
+            if (
+              window.confirm('Are you sure you want to delete this recipe?')
+            ) {
+              await deleteRecipe({
+                variables: {
+                  id,
+                },
+              })
+              navigate('/')
+            }
+          }}
+        >
+          ❌
+        </button>
       </p>
     </>
   )

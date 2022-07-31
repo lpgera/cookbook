@@ -22,11 +22,12 @@ export type RecipeQuery = {
   }
 }
 
-export type DeleteRecipeMutationVariables = Types.Exact<{
+export type UpdateRecipeMutationVariables = Types.Exact<{
   id: Types.Scalars['Int']
+  recipe: Types.RecipeInput
 }>
 
-export type DeleteRecipeMutation = {
+export type UpdateRecipeMutation = {
   __typename?: 'Mutation'
-  deleteRecipe: { __typename?: 'Recipe'; id: number }
+  updateRecipe: { __typename?: 'Recipe'; id: number }
 }
