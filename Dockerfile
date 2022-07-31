@@ -22,7 +22,9 @@ RUN npm ci --omit=dev
 
 COPY . .
 
-FROM node:18-alpine as TARGET
+RUN npx -w backend prisma generate
+
+FROM node:18 as TARGET
 
 ENV NODE_ENV production
 

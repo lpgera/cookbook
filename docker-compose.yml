@@ -20,6 +20,8 @@ services:
     command: npm run dev -w backend
     volumes:
       - .:/opt/app
+    ports:
+      - 4000:4000
   frontend:
     image: node:18
     restart: unless-stopped

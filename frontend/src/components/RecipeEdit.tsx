@@ -43,7 +43,8 @@ const RecipeEdit = () => {
       variables: {
         id,
       },
-      nextFetchPolicy: 'cache-and-network',
+      fetchPolicy: 'network-only',
+      nextFetchPolicy: 'network-only',
     }
   )
   const { control, register, formState, handleSubmit, reset } =

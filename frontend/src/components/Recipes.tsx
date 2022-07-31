@@ -15,7 +15,8 @@ function Recipes() {
       }
     `,
     {
-      nextFetchPolicy: 'cache-and-network',
+      fetchPolicy: 'network-only',
+      nextFetchPolicy: 'network-only',
     }
   )
 
