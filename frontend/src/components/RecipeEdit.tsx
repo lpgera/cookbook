@@ -47,8 +47,7 @@ const RecipeEdit = () => {
       nextFetchPolicy: 'network-only',
     }
   )
-  const { control, register, formState, handleSubmit, reset } =
-    useForm<FormData>()
+  const { control, register, handleSubmit, reset } = useForm<FormData>()
   const { fields, append, remove, swap } = useFieldArray({
     control,
     name: 'ingredients',
@@ -64,7 +63,7 @@ const RecipeEdit = () => {
         amount,
       })),
     })
-  }, [data])
+  }, [data, reset])
   const navigate = useNavigate()
   const [updateRecipe] = useMutation<
     UpdateRecipeMutation,
