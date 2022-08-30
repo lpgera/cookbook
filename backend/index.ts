@@ -12,7 +12,7 @@ app.use(
     maxAge: '30 days',
   })
 )
-app.get('/', function (_, res) {
+app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 })
 

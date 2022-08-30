@@ -105,10 +105,7 @@ const RecipeEdit = () => {
           />
         </p>
         <p>
-          <textarea
-            {...register('description', { required: true })}
-            placeholder={'Description'}
-          />
+          <textarea {...register('description')} placeholder={'Description'} />
         </p>
         <h3>Ingredients</h3>
         {fields.map((field, index) => (
@@ -155,6 +152,11 @@ const RecipeEdit = () => {
         <h3>Instructions</h3>
         <p>
           <textarea
+            style={{
+              width: '100%',
+              height: '300px',
+              boxSizing: 'border-box',
+            }}
             {...register('instructions', { required: 'Required' })}
             placeholder={'Instructions'}
           />
