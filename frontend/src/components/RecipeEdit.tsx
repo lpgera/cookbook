@@ -4,6 +4,7 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 import { useFieldArray, useForm } from 'react-hook-form'
 import {
+  IngredientsQuery,
   UpdateRecipeMutation,
   UpdateRecipeMutationVariables,
 } from './RecipeEdit.types.gen'
@@ -22,6 +23,11 @@ type FormData = {
 const RecipeEdit = () => {
   const { id: rawId } = useParams()
   const id = parseInt(rawId ?? '0')
+  const { data: ingredientsData } = useQuery<IngredientsQuery>(gql`
+    query Ingredients {
+      ingredients
+    }
+  `)
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
     gql`
       query Recipe($id: Int!) {
@@ -108,11 +114,17 @@ const RecipeEdit = () => {
           <textarea {...register('description')} placeholder={'Description'} />
         </p>
         <h3>Ingredients</h3>
+        <datalist id="ingredients">
+          {ingredientsData?.ingredients?.map((i) => (
+            <option value={i} key={i} />
+          ))}
+        </datalist>
         {fields.map((field, index) => (
           <React.Fragment key={field.id}>
             <p>
               <input {...register(`ingredients.${index}.id`)} type={'hidden'} />
               <input
+                list="ingredients"
                 {...register(`ingredients.${index}.name`, { required: true })}
                 placeholder={'Name'}
               />

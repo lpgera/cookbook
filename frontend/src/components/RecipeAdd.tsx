@@ -1,10 +1,11 @@
 import React from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { gql, useMutation } from '@apollo/client'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   AddRecipeMutation,
   AddRecipeMutationVariables,
+  IngredientsQuery,
 } from './RecipeAdd.types.gen'
 
 type FormData = {
@@ -18,6 +19,11 @@ type FormData = {
 }
 
 const RecipeAdd = () => {
+  const { data: ingredientsData } = useQuery<IngredientsQuery>(gql`
+    query Ingredients {
+      ingredients
+    }
+  `)
   const { control, register, handleSubmit } = useForm<FormData>()
   const { fields, append, remove, swap } = useFieldArray({
     control,
@@ -59,10 +65,16 @@ const RecipeAdd = () => {
           <textarea {...register('description')} placeholder={'Description'} />
         </p>
         <h3>Ingredients</h3>
+        <datalist id="ingredients">
+          {ingredientsData?.ingredients?.map((i) => (
+            <option value={i} key={i} />
+          ))}
+        </datalist>
         {fields.map((field, index) => (
           <React.Fragment key={field.id}>
             <p>
               <input
+                list="ingredients"
                 {...register(`ingredients.${index}.name`, { required: true })}
                 placeholder={'Name'}
               />

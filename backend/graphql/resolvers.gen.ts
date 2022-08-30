@@ -72,6 +72,7 @@ export type MutationUpdateRecipeArgs = {
 
 export type Query = {
   __typename?: 'Query'
+  ingredients: Array<Scalars['String']>
   recipe: Recipe
   recipes: Array<Recipe>
 }
@@ -282,6 +283,11 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = ResolversObject<{
+  ingredients?: Resolver<
+    Array<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   recipe?: Resolver<
     ResolversTypes['Recipe'],
     ParentType,

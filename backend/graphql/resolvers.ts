@@ -53,6 +53,15 @@ export default {
         },
       })
     },
+    ingredients: async () => {
+      const ingredients = await prisma.ingredient.findMany({
+        select: {
+          name: true,
+        },
+        distinct: ['name'],
+      })
+      return ingredients.map((i) => i.name)
+    },
   },
   Mutation: {
     addRecipe(_, { recipe }) {

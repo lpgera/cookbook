@@ -27,6 +27,7 @@ export default gql`
   type Query {
     recipes: [Recipe!]!
     recipe(id: Int!): Recipe!
+    ingredients: [String!]!
   }
 
   input IngredientInput {

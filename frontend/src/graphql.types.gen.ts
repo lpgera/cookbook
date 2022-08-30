@@ -59,6 +59,7 @@ export type MutationUpdateRecipeArgs = {
 
 export type Query = {
   __typename?: 'Query'
+  ingredients: Array<Scalars['String']>
   recipe: Recipe
   recipes: Array<Recipe>
 }
