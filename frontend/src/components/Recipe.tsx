@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { gql, useMutation, useQuery } from '@apollo/client'
+import ReactMarkdown from 'react-markdown'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 
 const Recipe = () => {
@@ -61,15 +62,7 @@ const Recipe = () => {
         ))}
       </ul>
       <h3>Instructions</h3>
-      <p>
-        {data.recipe.instructions?.split('\n').map((line, index) => (
-          <React.Fragment key={index}>
-            {line}
-            <br />
-            <br />
-          </React.Fragment>
-        ))}
-      </p>
+      <ReactMarkdown children={data.recipe.instructions} />
       <p>
         <button onClick={() => navigate('edit')}>✏️</button>
         &nbsp;
