@@ -22,6 +22,15 @@ export default {
     },
   }),
   Ingredient: {
+    group: ({ groupId: id }) => {
+      return prisma.ingredientGroup.findFirstOrThrow({
+        where: {
+          id,
+        },
+      })
+    },
+  },
+  IngredientGroup: {
     recipe: ({ recipeId: id }) => {
       return prisma.recipe.findFirstOrThrow({
         where: {
@@ -29,15 +38,19 @@ export default {
         },
       })
     },
-  },
-  Recipe: {
-    ingredients({ id: recipeId }) {
+    ingredients: ({ id: groupId }) => {
       return prisma.ingredient.findMany({
         where: {
-          recipeId,
+          groupId,
         },
-        orderBy: {
-          order: 'asc',
+      })
+    },
+  },
+  Recipe: {
+    ingredientGroups({ id: recipeId }) {
+      return prisma.ingredientGroup.findMany({
+        where: {
+          recipeId,
         },
       })
     },
@@ -62,6 +75,15 @@ export default {
       })
       return ingredients.map((i) => i.name)
     },
+    units: async () => {
+      const ingredients = await prisma.ingredient.findMany({
+        select: {
+          unit: true,
+        },
+        distinct: ['unit'],
+      })
+      return ingredients.map((i) => i.unit)
+    },
   },
   Mutation: {
     addRecipe(_, { recipe }) {
@@ -70,33 +92,27 @@ export default {
           name: recipe.name,
           description: recipe.description,
           instructions: recipe.instructions,
-          ingredients: {
-            create: recipe.ingredients.map((ingredient, index) => ({
-              order: index,
-              ...ingredient,
+          ingredientGroups: {
+            create: recipe.ingredientGroups.map((group) => ({
+              ...group,
+              ingredients: {
+                create: group.ingredients.map((ingredient, index) => ({
+                  ...ingredient,
+                  order: index,
+                })),
+              },
             })),
           },
         },
       })
     },
     async updateRecipe(_, { id: recipeId, recipe }) {
-      const existingIngredientIds = (
-        await prisma.ingredient.findMany({
+      await prisma.$transaction([
+        prisma.ingredientGroup.deleteMany({
           where: {
             recipeId,
           },
-          select: {
-            id: true,
-          },
-        })
-      ).map(({ id }) => id)
-      const newIngredientIds = recipe.ingredients.map(({ id }) => id)
-      const ingredientIdsToDelete = existingIngredientIds.filter(
-        (existingIngredientId) =>
-          !newIngredientIds.includes(existingIngredientId)
-      )
-
-      await prisma.$transaction([
+        }),
         prisma.recipe.update({
           where: {
             id: recipeId,
@@ -105,37 +121,18 @@ export default {
             name: recipe.name,
             description: recipe.description,
             instructions: recipe.instructions,
-          },
-        }),
-        prisma.ingredient.deleteMany({
-          where: {
-            id: {
-              in: ingredientIdsToDelete,
+            ingredientGroups: {
+              create: recipe.ingredientGroups.map((group) => ({
+                ...group,
+                ingredients: {
+                  create: group.ingredients.map((ingredient, index) => ({
+                    ...ingredient,
+                    order: index,
+                  })),
+                },
+              })),
             },
           },
-        }),
-        ...recipe.ingredients.map((ingredient, index) => {
-          if (ingredient.id) {
-            return prisma.ingredient.update({
-              where: {
-                id: ingredient.id,
-              },
-              data: {
-                id: ingredient.id,
-                name: ingredient.name,
-                amount: ingredient.amount,
-                order: index,
-              },
-            })
-          }
-          return prisma.ingredient.create({
-            data: {
-              recipeId,
-              name: ingredient.name,
-              amount: ingredient.amount,
-              order: index,
-            },
-          })
         }),
       ])
 

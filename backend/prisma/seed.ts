@@ -12,31 +12,40 @@ async function seed() {
         'Pour the eggs into the pan and let it cook for a few seconds. Stir every few seconds.\n' +
         'Stop when the eggs are mostly set and remove the pan from the heat.\n' +
         'Season with salt and pepper.',
-      ingredients: {
-        createMany: {
-          data: [
-            {
-              name: 'eggs',
-              amount: '6 pieces',
-              order: 1,
+      ingredientGroups: {
+        create: [
+          {
+            name: '',
+            ingredients: {
+              create: [
+                {
+                  name: 'eggs',
+                  amount: '6',
+                  unit: 'pieces',
+                  order: 1,
+                },
+                {
+                  name: 'olive oil',
+                  amount: 'a few',
+                  unit: 'drops',
+                  order: 2,
+                },
+                {
+                  name: 'salt',
+                  amount: '1',
+                  unit: 'pinch',
+                  order: 3,
+                },
+                {
+                  name: 'pepper',
+                  amount: '1',
+                  unit: 'pinch',
+                  order: 4,
+                },
+              ],
             },
-            {
-              name: 'olive oil',
-              amount: 'a few drops',
-              order: 2,
-            },
-            {
-              name: 'salt',
-              amount: 'a pinch',
-              order: 3,
-            },
-            {
-              name: 'pepper',
-              amount: 'a pinch',
-              order: 4,
-            },
-          ],
-        },
+          },
+        ],
       },
     },
   })

@@ -11,22 +11,36 @@ datasource db {
 }
 
 model Recipe {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  name         String   @db.VarChar(511)
-  description  String?
-  instructions String?
-  ingredients  Ingredient[]
+  id               Int          @id @default(autoincrement())
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  name             String       @db.VarChar(511)
+  description      String?
+  instructions     String?
+  ingredientGroups IngredientGroup[]
+}
+
+model IngredientGroup {
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  recipeId    Int
+  recipe      Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name        String?      @db.VarChar(511)
+  ingredients Ingredient[]
 }
 
 model Ingredient {
-  id        Int     @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  recipeId  Int
-  recipe    Recipe @relation(fields: [recipeId], references: [id])
-  name      String   @db.VarChar(511)
-  amount    String   @db.VarChar(511)
+  id        Int             @id @default(autoincrement())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  groupId   Int
+  group     IngredientGroup @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name      String          @db.VarChar(511)
+  amount    String          @db.VarChar(511)
+  unit      String          @db.VarChar(511)
   order     Int
+
+  @@index([name])
+  @@index([unit])
 }

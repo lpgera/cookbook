@@ -3,7 +3,11 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql'
-import { PrismaRecipe, PrismaIngredient } from './typeMappings'
+import {
+  PrismaRecipe,
+  PrismaIngredientGroup,
+  PrismaIngredient,
+} from './typeMappings'
 export type Maybe<T> = T extends PromiseLike<infer U>
   ? Promise<U | null>
   : T | null
@@ -36,18 +40,37 @@ export type Ingredient = {
   __typename?: 'Ingredient'
   amount: Scalars['String']
   createdAt: Scalars['Date']
+  group: IngredientGroup
+  groupId: Scalars['Int']
   id: Scalars['Int']
   name: Scalars['String']
   order: Scalars['Int']
+  unit: Scalars['String']
+  updatedAt: Scalars['Date']
+}
+
+export type IngredientGroup = {
+  __typename?: 'IngredientGroup'
+  createdAt: Scalars['Date']
+  id: Scalars['Int']
+  ingredients: Array<Ingredient>
+  name: Scalars['String']
   recipe: Recipe
   recipeId: Scalars['Int']
   updatedAt: Scalars['Date']
+}
+
+export type IngredientGroupInput = {
+  id?: InputMaybe<Scalars['Int']>
+  ingredients: Array<IngredientInput>
+  name: Scalars['String']
 }
 
 export type IngredientInput = {
   amount: Scalars['String']
   id?: InputMaybe<Scalars['Int']>
   name: Scalars['String']
+  unit: Scalars['String']
 }
 
 export type Mutation = {
@@ -86,7 +109,7 @@ export type Recipe = {
   createdAt: Scalars['Date']
   description: Scalars['String']
   id: Scalars['Int']
-  ingredients: Array<Ingredient>
+  ingredientGroups: Array<IngredientGroup>
   instructions: Scalars['String']
   name: Scalars['String']
   updatedAt: Scalars['Date']
@@ -94,7 +117,7 @@ export type Recipe = {
 
 export type RecipeInput = {
   description: Scalars['String']
-  ingredients: Array<IngredientInput>
+  ingredientGroups: Array<IngredientGroupInput>
   instructions: Scalars['String']
   name: Scalars['String']
 }
@@ -212,6 +235,8 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   Date: ResolverTypeWrapper<Scalars['Date']>
   Ingredient: ResolverTypeWrapper<PrismaIngredient>
+  IngredientGroup: ResolverTypeWrapper<PrismaIngredientGroup>
+  IngredientGroupInput: IngredientGroupInput
   IngredientInput: IngredientInput
   Int: ResolverTypeWrapper<Scalars['Int']>
   Mutation: ResolverTypeWrapper<{}>
@@ -226,6 +251,8 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']
   Date: Scalars['Date']
   Ingredient: PrismaIngredient
+  IngredientGroup: PrismaIngredientGroup
+  IngredientGroupInput: IngredientGroupInput
   IngredientInput: IngredientInput
   Int: Scalars['Int']
   Mutation: {}
@@ -246,9 +273,28 @@ export type IngredientResolvers<
 > = ResolversObject<{
   amount?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
+  group?: Resolver<ResolversTypes['IngredientGroup'], ParentType, ContextType>
+  groupId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  unit?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}>
+
+export type IngredientGroupResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['IngredientGroup'] = ResolversParentTypes['IngredientGroup']
+> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  ingredients?: Resolver<
+    Array<ResolversTypes['Ingredient']>,
+    ParentType,
+    ContextType
+  >
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   recipe?: Resolver<ResolversTypes['Recipe'], ParentType, ContextType>
   recipeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
@@ -304,8 +350,8 @@ export type RecipeResolvers<
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-  ingredients?: Resolver<
-    Array<ResolversTypes['Ingredient']>,
+  ingredientGroups?: Resolver<
+    Array<ResolversTypes['IngredientGroup']>,
     ParentType,
     ContextType
   >
@@ -318,6 +364,7 @@ export type RecipeResolvers<
 export type Resolvers<ContextType = any> = ResolversObject<{
   Date?: GraphQLScalarType
   Ingredient?: IngredientResolvers<ContextType>
+  IngredientGroup?: IngredientGroupResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Recipe?: RecipeResolvers<ContextType>

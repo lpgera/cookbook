@@ -10,6 +10,16 @@ export default gql`
     name: String!
     description: String!
     instructions: String!
+    ingredientGroups: [IngredientGroup!]!
+  }
+
+  type IngredientGroup {
+    id: Int!
+    createdAt: Date!
+    updatedAt: Date!
+    recipeId: Int!
+    recipe: Recipe!
+    name: String!
     ingredients: [Ingredient!]!
   }
 
@@ -17,10 +27,11 @@ export default gql`
     id: Int!
     createdAt: Date!
     updatedAt: Date!
-    recipeId: Int!
-    recipe: Recipe!
+    groupId: Int!
+    group: IngredientGroup!
     name: String!
     amount: String!
+    unit: String!
     order: Int!
   }
 
@@ -28,19 +39,27 @@ export default gql`
     recipes: [Recipe!]!
     recipe(id: Int!): Recipe!
     ingredients: [String!]!
+    units: [String!]!
   }
 
   input IngredientInput {
     id: Int
     name: String!
     amount: String!
+    unit: String!
+  }
+
+  input IngredientGroupInput {
+    id: Int
+    name: String!
+    ingredients: [IngredientInput!]!
   }
 
   input RecipeInput {
     name: String!
     description: String!
     instructions: String!
-    ingredients: [IngredientInput!]!
+    ingredientGroups: [IngredientGroupInput!]!
   }
 
   type Mutation {

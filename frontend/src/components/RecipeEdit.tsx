@@ -1,33 +1,18 @@
 import React, { useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { gql, useMutation, useQuery } from '@apollo/client'
+import { useForm } from 'react-hook-form'
+import RecipeForm from './form/RecipeForm'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
-import { useFieldArray, useForm } from 'react-hook-form'
 import {
-  IngredientsQuery,
   UpdateRecipeMutation,
   UpdateRecipeMutationVariables,
 } from './RecipeEdit.types.gen'
-
-type FormData = {
-  name: string
-  description: string
-  instructions: string
-  ingredients: {
-    id: number
-    name: string
-    amount: string
-  }[]
-}
+import FormData from './form/FormData.type'
 
 const RecipeEdit = () => {
   const { id: rawId } = useParams()
   const id = parseInt(rawId ?? '0')
-  const { data: ingredientsData } = useQuery<IngredientsQuery>(gql`
-    query Ingredients {
-      ingredients
-    }
-  `)
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
     gql`
       query Recipe($id: Int!) {
@@ -36,11 +21,16 @@ const RecipeEdit = () => {
           name
           description
           instructions
-          ingredients {
+          ingredientGroups {
             id
             name
-            amount
-            order
+            ingredients {
+              id
+              name
+              amount
+              unit
+              order
+            }
           }
         }
       }
@@ -54,20 +44,24 @@ const RecipeEdit = () => {
     }
   )
   const { control, register, handleSubmit, reset } = useForm<FormData>()
-  const { fields, append, remove, swap } = useFieldArray({
-    control,
-    name: 'ingredients',
-  })
+
   useEffect(() => {
     reset({
       name: data?.recipe.name,
       description: data?.recipe.description,
       instructions: data?.recipe.instructions,
-      ingredients: data?.recipe.ingredients.map(({ id, name, amount }) => ({
-        id,
-        name,
-        amount,
-      })),
+      ingredientGroups: data?.recipe.ingredientGroups.map(
+        ({ id, name, ingredients }) => ({
+          id,
+          name,
+          ingredients: ingredients.map(({ id, name, amount, unit }) => ({
+            id,
+            name,
+            amount,
+            unit,
+          })),
+        })
+      ),
     })
   }, [data, reset])
   const navigate = useNavigate()
@@ -103,80 +97,11 @@ const RecipeEdit = () => {
     <>
       <Link to={`/${id}`}>Cancel</Link>
       <h2>Edit recipe</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <p>
-          <input
-            {...register('name', { required: true })}
-            placeholder={'Name'}
-          />
-        </p>
-        <p>
-          <textarea {...register('description')} placeholder={'Description'} />
-        </p>
-        <h3>Ingredients</h3>
-        <datalist id="ingredients">
-          {ingredientsData?.ingredients?.map((i) => (
-            <option value={i} key={i} />
-          ))}
-        </datalist>
-        {fields.map((field, index) => (
-          <React.Fragment key={field.id}>
-            <p>
-              <input {...register(`ingredients.${index}.id`)} type={'hidden'} />
-              <input
-                list="ingredients"
-                {...register(`ingredients.${index}.name`, { required: true })}
-                placeholder={'Name'}
-              />
-              &nbsp;
-              <input
-                {...register(`ingredients.${index}.amount`)}
-                placeholder={'Amount'}
-              />
-              &nbsp;
-              <button
-                type="button"
-                onClick={() => swap(index, index - 1)}
-                disabled={index <= 0}
-              >
-                ⬆️
-              </button>
-              &nbsp;
-              <button
-                type="button"
-                onClick={() => swap(index, index + 1)}
-                disabled={index >= fields.length - 1}
-              >
-                ⬇️
-              </button>
-              &nbsp;
-              <button type="button" onClick={() => remove(index)}>
-                ❌
-              </button>
-            </p>
-          </React.Fragment>
-        ))}
-        <p>
-          <button onClick={() => append({ id: 0, name: '', amount: '' })}>
-            ➕
-          </button>
-        </p>
-        <h3>Instructions</h3>
-        <p>
-          <textarea
-            style={{
-              width: '100%',
-              height: '300px',
-              boxSizing: 'border-box',
-            }}
-            {...register('instructions', { required: 'Required' })}
-            placeholder={'Instructions'}
-          />
-        </p>
-        <p>
-          <button type="submit">💾</button>
-        </p>
-      </form>
+      <RecipeForm
+        control={control}
+        register={register}
+        onSubmit={handleSubmit(onSubmit)}
+      />
     </>
   )
 }

@@ -12,12 +12,17 @@ export type RecipeQuery = {
     name: string
     description: string
     instructions: string
-    ingredients: Array<{
-      __typename?: 'Ingredient'
+    ingredientGroups: Array<{
+      __typename?: 'IngredientGroup'
       id: number
       name: string
-      amount: string
-      order: number
+      ingredients: Array<{
+        __typename?: 'Ingredient'
+        id: number
+        name: string
+        amount: string
+        unit: string
+      }>
     }>
   }
 }

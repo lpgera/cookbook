@@ -16,11 +16,15 @@ const Recipe = () => {
           name
           description
           instructions
-          ingredients {
+          ingredientGroups {
             id
             name
-            amount
-            order
+            ingredients {
+              id
+              name
+              amount
+              unit
+            }
           }
         }
       }
@@ -54,13 +58,18 @@ const Recipe = () => {
       <h2>{data.recipe.name}</h2>
       <p>{data.recipe.description}</p>
       <h3>Ingredients</h3>
-      <ul>
-        {data.recipe.ingredients.map((ingredient, index) => (
-          <li key={index}>
-            {ingredient.name}, {ingredient.amount}
-          </li>
-        ))}
-      </ul>
+      {data.recipe.ingredientGroups.map((group) => (
+        <React.Fragment key={group.id}>
+          {group.name ? <h4>{group.name}</h4> : null}
+          <ul>
+            {group.ingredients.map((ingredient, index) => (
+              <li key={index}>
+                {ingredient.name}, {ingredient.amount} {ingredient.unit}
+              </li>
+            ))}
+          </ul>
+        </React.Fragment>
+      ))}
       <h3>Instructions</h3>
       <ReactMarkdown children={data.recipe.instructions} />
       <p>

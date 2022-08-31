@@ -1,12 +1,5 @@
 import * as Types from '../graphql.types.gen'
 
-export type IngredientsQueryVariables = Types.Exact<{ [key: string]: never }>
-
-export type IngredientsQuery = {
-  __typename?: 'Query'
-  ingredients: Array<string>
-}
-
 export type RecipeQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']
 }>
@@ -19,12 +12,18 @@ export type RecipeQuery = {
     name: string
     description: string
     instructions: string
-    ingredients: Array<{
-      __typename?: 'Ingredient'
+    ingredientGroups: Array<{
+      __typename?: 'IngredientGroup'
       id: number
       name: string
-      amount: string
-      order: number
+      ingredients: Array<{
+        __typename?: 'Ingredient'
+        id: number
+        name: string
+        amount: string
+        unit: string
+        order: number
+      }>
     }>
   }
 }
