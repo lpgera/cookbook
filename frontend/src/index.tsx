@@ -6,6 +6,17 @@ import App from './App'
 const apolloClient = new ApolloClient({
   uri: '/graphql',
   cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'network-only',
+    },
+    watchQuery: {
+      fetchPolicy: 'cache-and-network',
+    },
+    mutate: {
+      fetchPolicy: 'network-only',
+    },
+  },
 })
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)

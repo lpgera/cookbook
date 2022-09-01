@@ -13,11 +13,7 @@ function Recipes() {
           name
         }
       }
-    `,
-    {
-      fetchPolicy: 'network-only',
-      nextFetchPolicy: 'network-only',
-    }
+    `
   )
 
   if (loading) {

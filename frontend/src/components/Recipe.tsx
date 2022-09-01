@@ -33,8 +33,6 @@ const Recipe = () => {
       variables: {
         id,
       },
-      fetchPolicy: 'network-only',
-      nextFetchPolicy: 'network-only',
     }
   )
   const [deleteRecipe] = useMutation(gql`
