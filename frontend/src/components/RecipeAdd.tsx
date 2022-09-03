@@ -1,7 +1,8 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { Card, CardContent, Typography } from '@mui/material'
 import RecipeForm from './form/RecipeForm'
 import {
   AddRecipeMutation,
@@ -48,15 +49,16 @@ const RecipeAdd = () => {
   }
 
   return (
-    <>
-      <Link to={'/'}>Recipes</Link>
-      <h2>New recipe</h2>
-      <RecipeForm
-        control={control}
-        register={register}
-        onSubmit={handleSubmit(onSubmit)}
-      />
-    </>
+    <Card>
+      <CardContent>
+        <Typography variant="h4">Add recipe</Typography>
+        <RecipeForm
+          control={control}
+          register={register}
+          onSubmit={handleSubmit(onSubmit)}
+        />
+      </CardContent>
+    </Card>
   )
 }
 

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { useForm } from 'react-hook-form'
+import { Card, CardContent, Typography } from '@mui/material'
 import RecipeForm from './form/RecipeForm'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 import {
@@ -9,6 +10,8 @@ import {
   UpdateRecipeMutationVariables,
 } from './RecipeEdit.types.gen'
 import FormData from './form/FormData.type'
+import Loading from './utils/Loading'
+import Error from './utils/Error'
 
 const RecipeEdit = () => {
   const { id: rawId } = useParams()
@@ -87,22 +90,23 @@ const RecipeEdit = () => {
   }
 
   if (loading) {
-    return <p>Loading...</p>
+    return <Loading />
   }
   if (error || !data?.recipe) {
-    return <p>Error :(</p>
+    return <Error message={error?.message} />
   }
 
   return (
-    <>
-      <Link to={`/${id}`}>Cancel</Link>
-      <h2>Edit recipe</h2>
-      <RecipeForm
-        control={control}
-        register={register}
-        onSubmit={handleSubmit(onSubmit)}
-      />
-    </>
+    <Card>
+      <CardContent>
+        <Typography variant="h4">Edit recipe</Typography>
+        <RecipeForm
+          control={control}
+          register={register}
+          onSubmit={handleSubmit(onSubmit)}
+        />
+      </CardContent>
+    </Card>
   )
 }
 

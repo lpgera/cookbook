@@ -1,25 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ReactMarkdown from 'react-markdown'
-import {
-  Card,
-  CardContent,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  Box,
-  Typography,
-} from '@mui/material'
-import { MoreVert } from '@mui/icons-material'
+import { Card, CardContent, Divider, Box, Typography, Fab } from '@mui/material'
+import { Edit, Delete } from '@mui/icons-material'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
 
 const ActionMenu = ({ id }: { id: number }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const isOpen = Boolean(anchorEl)
   const navigate = useNavigate()
   const [deleteRecipe] = useMutation(gql`
     mutation DeleteRecipe($id: Int!) {
@@ -31,48 +20,39 @@ const ActionMenu = ({ id }: { id: number }) => {
 
   return (
     <>
-      <IconButton
-        id={'action-button'}
-        aria-controls={isOpen ? 'action-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={isOpen ? 'true' : undefined}
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-      >
-        <MoreVert />
-      </IconButton>
-      <Menu
-        id="action-menu"
-        anchorEl={anchorEl}
-        open={isOpen}
-        onClose={() => setAnchorEl(null)}
-        MenuListProps={{
-          'aria-labelledby': 'action-button',
+      <Fab
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
         }}
+        color="secondary"
+        onClick={() => navigate('edit')}
+        aria-label="edit"
       >
-        <MenuItem
-          onClick={() => {
-            navigate('edit')
-          }}
-        >
-          Edit recipe
-        </MenuItem>
-        <MenuItem
-          onClick={async () => {
-            if (
-              window.confirm('Are you sure you want to delete this recipe?')
-            ) {
-              await deleteRecipe({
-                variables: {
-                  id,
-                },
-              })
-              navigate('/')
-            }
-          }}
-        >
-          Delete recipe
-        </MenuItem>
-      </Menu>
+        <Edit />
+      </Fab>
+      <Fab
+        style={{
+          position: 'fixed',
+          bottom: 96,
+          right: 24,
+        }}
+        color="error"
+        onClick={async () => {
+          if (window.confirm('Are you sure you want to delete this recipe?')) {
+            await deleteRecipe({
+              variables: {
+                id,
+              },
+            })
+            navigate('/')
+          }
+        }}
+        aria-label="delete"
+      >
+        <Delete />
+      </Fab>
     </>
   )
 }
@@ -116,63 +96,65 @@ const Recipe = () => {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Box
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-          }}
-        >
-          <Typography
-            gutterBottom
-            variant="h4"
+    <>
+      <Card>
+        <CardContent>
+          <Box
             style={{
-              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'flex-start',
             }}
           >
-            {data.recipe.name}
-          </Typography>
-          <ActionMenu id={id} />
-        </Box>
-        {data.recipe.description ? (
-          <Typography variant="body1">{data.recipe.description}</Typography>
-        ) : null}
+            <Typography
+              gutterBottom
+              variant="h4"
+              style={{
+                flexGrow: 1,
+              }}
+            >
+              {data.recipe.name}
+            </Typography>
+          </Box>
+          {data.recipe.description ? (
+            <Typography variant="body1">{data.recipe.description}</Typography>
+          ) : null}
 
-        <Divider
-          style={{
-            marginTop: 16,
-            marginBottom: 16,
-          }}
-        />
+          <Divider
+            style={{
+              marginTop: 16,
+              marginBottom: 16,
+            }}
+          />
 
-        <Typography variant="h5">Ingredients</Typography>
-        {data.recipe.ingredientGroups.map((group) => (
-          <React.Fragment key={group.id}>
-            {group.name ? (
-              <Typography variant="h6">{group.name}</Typography>
-            ) : null}
-            <ul>
-              {group.ingredients.map((ingredient, index) => (
-                <li key={index}>
-                  {ingredient.name}, {ingredient.amount} {ingredient.unit}
-                </li>
-              ))}
-            </ul>
-          </React.Fragment>
-        ))}
+          <Typography variant="h5">Ingredients</Typography>
+          {data.recipe.ingredientGroups.map((group) => (
+            <React.Fragment key={group.id}>
+              {group.name ? (
+                <Typography variant="h6">{group.name}</Typography>
+              ) : null}
+              <ul>
+                {group.ingredients.map((ingredient, index) => (
+                  <li key={index}>
+                    {ingredient.name}, {ingredient.amount} {ingredient.unit}
+                  </li>
+                ))}
+              </ul>
+            </React.Fragment>
+          ))}
 
-        <Divider
-          style={{
-            marginTop: 16,
-            marginBottom: 16,
-          }}
-        />
+          <Divider
+            style={{
+              marginTop: 16,
+              marginBottom: 16,
+            }}
+          />
 
-        <Typography variant="h5">Instructions</Typography>
-        <ReactMarkdown children={data.recipe.instructions} />
-      </CardContent>
-    </Card>
+          <Typography variant="h5">Instructions</Typography>
+          <ReactMarkdown children={data.recipe.instructions} />
+        </CardContent>
+      </Card>
+      <ActionMenu id={id} />
+    </>
   )
 }
 

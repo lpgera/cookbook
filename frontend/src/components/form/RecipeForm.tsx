@@ -1,8 +1,10 @@
 import React from 'react'
 import { Control, UseFormRegister } from 'react-hook-form'
+import { gql, useQuery } from '@apollo/client'
+import { Fab } from '@mui/material'
+import { Save } from '@mui/icons-material'
 import IngredientGroupFieldArray from './IngredientGroupFieldArray'
 import FormData from './FormData.type'
-import { gql, useQuery } from '@apollo/client'
 import { IngredientsQuery, UnitsQuery } from './RecipeForm.types.gen'
 
 const RecipeForm = ({
@@ -61,9 +63,18 @@ const RecipeForm = ({
             placeholder={'Instructions'}
           />
         </p>
-        <p>
-          <button type="submit">💾</button>
-        </p>
+        <Fab
+          style={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+          }}
+          color="secondary"
+          aria-label="save"
+          onClick={onSubmit}
+        >
+          <Save />
+        </Fab>
       </form>
     </>
   )

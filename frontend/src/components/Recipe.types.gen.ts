@@ -1,5 +1,14 @@
 import * as Types from '../graphql.types.gen'
 
+export type DeleteRecipeMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int']
+}>
+
+export type DeleteRecipeMutation = {
+  __typename?: 'Mutation'
+  deleteRecipe: { __typename?: 'Recipe'; id: number }
+}
+
 export type RecipeQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']
 }>
@@ -25,13 +34,4 @@ export type RecipeQuery = {
       }>
     }>
   }
-}
-
-export type DeleteRecipeMutationVariables = Types.Exact<{
-  id: Types.Scalars['Int']
-}>
-
-export type DeleteRecipeMutation = {
-  __typename?: 'Mutation'
-  deleteRecipe: { __typename?: 'Recipe'; id: number }
 }

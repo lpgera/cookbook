@@ -4,5 +4,10 @@ export type RecipesQueryVariables = Types.Exact<{ [key: string]: never }>
 
 export type RecipesQuery = {
   __typename?: 'Query'
-  recipes: Array<{ __typename?: 'Recipe'; id: number; name: string }>
+  recipes: Array<{
+    __typename?: 'Recipe'
+    id: number
+    name: string
+    description: string
+  }>
 }
