@@ -24,7 +24,11 @@ COPY . .
 
 RUN npx -w backend prisma generate
 
-FROM node:18 as TARGET
+FROM node:18-slim as TARGET
+
+RUN apt-get update
+
+RUN apt-get install -y openssl
 
 ENV NODE_ENV production
 
