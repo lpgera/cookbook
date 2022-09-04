@@ -11,7 +11,7 @@ import {
 import FormData from './form/FormData.type'
 
 const RecipeAdd = () => {
-  const { control, register, handleSubmit } = useForm<FormData>({
+  const { control, register, formState, handleSubmit } = useForm<FormData>({
     defaultValues: {
       ingredientGroups: [
         {
@@ -55,6 +55,7 @@ const RecipeAdd = () => {
         <RecipeForm
           control={control}
           register={register}
+          formState={formState}
           onSubmit={handleSubmit(onSubmit)}
         />
       </CardContent>

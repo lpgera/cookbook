@@ -46,7 +46,8 @@ const RecipeEdit = () => {
       nextFetchPolicy: 'network-only',
     }
   )
-  const { control, register, handleSubmit, reset } = useForm<FormData>()
+  const { control, register, formState, handleSubmit, reset } =
+    useForm<FormData>()
 
   useEffect(() => {
     reset({
@@ -103,6 +104,7 @@ const RecipeEdit = () => {
         <RecipeForm
           control={control}
           register={register}
+          formState={formState}
           onSubmit={handleSubmit(onSubmit)}
         />
       </CardContent>

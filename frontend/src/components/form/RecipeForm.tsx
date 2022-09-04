@@ -1,7 +1,7 @@
 import React from 'react'
-import { Control, UseFormRegister } from 'react-hook-form'
+import { Control, FormState, UseFormRegister } from 'react-hook-form'
 import { gql, useQuery } from '@apollo/client'
-import { Fab } from '@mui/material'
+import { Fab, TextField, Typography } from '@mui/material'
 import { Save } from '@mui/icons-material'
 import IngredientGroupFieldArray from './IngredientGroupFieldArray'
 import FormData from './FormData.type'
@@ -10,10 +10,12 @@ import { IngredientsQuery, UnitsQuery } from './RecipeForm.types.gen'
 const RecipeForm = ({
   control,
   register,
+  formState,
   onSubmit,
 }: {
   control: Control<FormData>
   register: UseFormRegister<FormData>
+  formState: FormState<FormData>
   onSubmit: () => Promise<any>
 }) => {
   const { data: ingredientsData } = useQuery<IngredientsQuery>(gql`
@@ -28,55 +30,63 @@ const RecipeForm = ({
   `)
 
   return (
-    <>
-      <form onSubmit={onSubmit}>
-        <p>
-          <input
-            {...register('name', { required: true })}
-            placeholder={'Name'}
-          />
-        </p>
-        <p>
-          <textarea {...register('description')} placeholder={'Description'} />
-        </p>
-        <h3>Ingredients</h3>
-        <datalist id="ingredients">
-          {ingredientsData?.ingredients.map((i) => (
-            <option value={i} key={i} />
-          ))}
-        </datalist>
-        <datalist id="units">
-          {unitsData?.units.map((u) => (
-            <option value={u} key={u} />
-          ))}
-        </datalist>
-        <IngredientGroupFieldArray control={control} register={register} />
-        <h3>Instructions</h3>
-        <p>
-          <textarea
-            style={{
-              width: '100%',
-              height: '300px',
-              boxSizing: 'border-box',
-            }}
-            {...register('instructions', { required: 'Required' })}
-            placeholder={'Instructions'}
-          />
-        </p>
-        <Fab
-          style={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-          color="secondary"
-          aria-label="save"
-          onClick={onSubmit}
-        >
-          <Save />
-        </Fab>
-      </form>
-    </>
+    <form onSubmit={onSubmit}>
+      <div>
+        <TextField
+          size="small"
+          margin="normal"
+          {...register('name', { required: true })}
+          label="Name"
+          error={!!formState.errors.name}
+        />
+      </div>
+      <div>
+        <TextField
+          size="small"
+          margin="normal"
+          {...register('description')}
+          label="Description"
+          minRows={3}
+          multiline
+          fullWidth
+        />
+      </div>
+
+      <Typography variant="h5">Ingredients</Typography>
+      <IngredientGroupFieldArray
+        control={control}
+        register={register}
+        formState={formState}
+        ingredients={ingredientsData?.ingredients ?? []}
+        units={unitsData?.units ?? []}
+      />
+
+      <Typography variant="h5">Instructions</Typography>
+      <div>
+        <TextField
+          size="small"
+          margin="normal"
+          {...register('instructions', { required: 'Required' })}
+          label={'Instructions'}
+          error={!!formState.errors.instructions}
+          minRows={3}
+          multiline
+          fullWidth
+        />
+      </div>
+      <Fab
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+        }}
+        color="secondary"
+        aria-label="save"
+        onClick={onSubmit}
+      >
+        <Save />
+      </Fab>
+    </form>
   )
 }
 
