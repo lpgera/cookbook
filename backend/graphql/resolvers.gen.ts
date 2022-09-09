@@ -98,6 +98,7 @@ export type Query = {
   ingredients: Array<Scalars['String']>
   recipe: Recipe
   recipes: Array<Recipe>
+  units: Array<Scalars['String']>
 }
 
 export type QueryRecipeArgs = {
@@ -341,6 +342,7 @@ export type QueryResolvers<
     RequireFields<QueryRecipeArgs, 'id'>
   >
   recipes?: Resolver<Array<ResolversTypes['Recipe']>, ParentType, ContextType>
+  units?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
 }>
 
 export type RecipeResolvers<

@@ -45,9 +45,7 @@ const RecipeForm = ({
           size="small"
           margin="normal"
           {...register('description')}
-          label="Description"
-          minRows={3}
-          multiline
+          label="Short description"
           fullWidth
         />
       </div>

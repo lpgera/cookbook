@@ -68,7 +68,7 @@ const IngredientFieldArray = ({
               name={`ingredientGroups.${groupIndex}.ingredients.${index}.unit`}
               label="Unit"
               options={units}
-              style={{ width: 100 }}
+              style={{ width: 195 }}
               control={control}
             />
           </Grid>
@@ -111,7 +111,14 @@ const IngredientFieldArray = ({
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => append({ name: '', amount: '', unit: '' })}
+          onClick={() =>
+            append(
+              { name: '', amount: '', unit: '' },
+              {
+                focusName: `ingredientGroups.${groupIndex}.ingredients.${fields.length}.name`,
+              }
+            )
+          }
           startIcon={<Add />}
         >
           Add ingredient

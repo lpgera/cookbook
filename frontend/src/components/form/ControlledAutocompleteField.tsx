@@ -30,7 +30,7 @@ const ControlledAutocompleteField = <T extends FieldValues>({
       name={name}
       control={control}
       rules={rules}
-      render={({ field }) => (
+      render={({ field: { onBlur, onChange, ref, value } }) => (
         <Autocomplete
           options={options}
           style={{
@@ -39,13 +39,15 @@ const ControlledAutocompleteField = <T extends FieldValues>({
           }}
           freeSolo
           getOptionLabel={(option) => option}
-          {...field}
-          onChange={(e, v) => field.onChange(v)}
+          value={value}
+          onBlur={onBlur}
+          onChange={(e, v) => onChange(v)}
           renderInput={(params) => (
             <TextField
               {...params}
+              inputRef={ref}
               error={error}
-              onChange={(e) => field.onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value)}
               size="small"
               label={label}
             />
