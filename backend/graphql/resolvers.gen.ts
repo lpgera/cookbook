@@ -8,6 +8,7 @@ import {
   PrismaIngredientGroup,
   PrismaIngredient,
 } from './typeMappings'
+import { Context } from './context'
 export type Maybe<T> = T extends PromiseLike<infer U>
   ? Promise<U | null>
   : T | null
@@ -77,6 +78,7 @@ export type Mutation = {
   __typename?: 'Mutation'
   addRecipe: Recipe
   deleteRecipe: Recipe
+  login: Scalars['String']
   updateRecipe: Recipe
 }
 
@@ -86,6 +88,10 @@ export type MutationAddRecipeArgs = {
 
 export type MutationDeleteRecipeArgs = {
   id: Scalars['Int']
+}
+
+export type MutationLoginArgs = {
+  password: Scalars['String']
 }
 
 export type MutationUpdateRecipeArgs = {
@@ -263,13 +269,22 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String']
 }>
 
+export type LoggedInDirectiveArgs = {}
+
+export type LoggedInDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = Context,
+  Args = LoggedInDirectiveArgs
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>
+
 export interface DateScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date'
 }
 
 export type IngredientResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Ingredient'] = ResolversParentTypes['Ingredient']
 > = ResolversObject<{
   amount?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -285,7 +300,7 @@ export type IngredientResolvers<
 }>
 
 export type IngredientGroupResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['IngredientGroup'] = ResolversParentTypes['IngredientGroup']
 > = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
@@ -303,7 +318,7 @@ export type IngredientGroupResolvers<
 }>
 
 export type MutationResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
   addRecipe?: Resolver<
@@ -318,6 +333,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationDeleteRecipeArgs, 'id'>
   >
+  login?: Resolver<
+    ResolversTypes['String'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationLoginArgs, 'password'>
+  >
   updateRecipe?: Resolver<
     ResolversTypes['Recipe'],
     ParentType,
@@ -327,7 +348,7 @@ export type MutationResolvers<
 }>
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = ResolversObject<{
   ingredients?: Resolver<
@@ -346,7 +367,7 @@ export type QueryResolvers<
 }>
 
 export type RecipeResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Recipe'] = ResolversParentTypes['Recipe']
 > = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
@@ -363,11 +384,15 @@ export type RecipeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }>
 
-export type Resolvers<ContextType = any> = ResolversObject<{
+export type Resolvers<ContextType = Context> = ResolversObject<{
   Date?: GraphQLScalarType
   Ingredient?: IngredientResolvers<ContextType>
   IngredientGroup?: IngredientGroupResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Recipe?: RecipeResolvers<ContextType>
+}>
+
+export type DirectiveResolvers<ContextType = Context> = ResolversObject<{
+  loggedIn?: LoggedInDirectiveResolver<any, any, ContextType>
 }>

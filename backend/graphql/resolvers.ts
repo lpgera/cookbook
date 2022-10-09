@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { GraphQLScalarType, Kind } from 'graphql'
+import jwt from 'jsonwebtoken'
 import { Resolvers } from './resolvers.gen'
 
 const prisma = new PrismaClient()
@@ -86,8 +87,14 @@ export default {
     },
   },
   Mutation: {
-    addRecipe(_, { recipe }) {
-      return prisma.recipe.create({
+    login: (_, { password }) => {
+      if (process.env.JWT_SECRET && password === process.env.PASSWORD) {
+        return jwt.sign('cookbook', process.env.JWT_SECRET)
+      }
+      throw new Error('Invalid password')
+    },
+    addRecipe: (_, { recipe }) =>
+      prisma.recipe.create({
         data: {
           name: recipe.name,
           description: recipe.description,
@@ -104,9 +111,8 @@ export default {
             })),
           },
         },
-      })
-    },
-    async updateRecipe(_, { id: recipeId, recipe }) {
+      }),
+    updateRecipe: async (_, { id: recipeId, recipe }) => {
       await prisma.$transaction([
         prisma.ingredientGroup.deleteMany({
           where: {
@@ -142,12 +148,11 @@ export default {
         },
       })
     },
-    deleteRecipe(_, { id }) {
-      return prisma.recipe.delete({
+    deleteRecipe: (_, { id }) =>
+      prisma.recipe.delete({
         where: {
           id,
         },
-      })
-    },
+      }),
   },
 } as Resolvers

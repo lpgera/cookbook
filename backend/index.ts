@@ -1,8 +1,8 @@
 import path from 'path'
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
-import typeDefs from './graphql/typeDefs'
-import resolvers from './graphql/resolvers'
+import schema from './graphql/schema'
+import context from './graphql/context'
 
 const app = express()
 const port = process.env.PORT ?? 4000
@@ -16,7 +16,10 @@ app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 })
 
-const apolloServer = new ApolloServer({ resolvers, typeDefs })
+const apolloServer = new ApolloServer({
+  schema,
+  context,
+})
 
 apolloServer
   .start()

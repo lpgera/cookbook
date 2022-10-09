@@ -1,6 +1,11 @@
 import { gql } from 'apollo-server'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+import { schemaTransformer } from './loggedInDirective'
+import resolvers from './resolvers'
 
-export default gql`
+const typeDefs = gql`
+  directive @loggedIn on FIELD_DEFINITION | MUTATION
+
   scalar Date
 
   type Recipe {
@@ -36,10 +41,10 @@ export default gql`
   }
 
   type Query {
-    recipes: [Recipe!]!
-    recipe(id: Int!): Recipe!
-    ingredients: [String!]!
-    units: [String!]!
+    recipes: [Recipe!]! @loggedIn
+    recipe(id: Int!): Recipe! @loggedIn
+    ingredients: [String!]! @loggedIn
+    units: [String!]! @loggedIn
   }
 
   input IngredientInput {
@@ -63,8 +68,18 @@ export default gql`
   }
 
   type Mutation {
-    addRecipe(recipe: RecipeInput!): Recipe!
-    updateRecipe(id: Int!, recipe: RecipeInput!): Recipe!
-    deleteRecipe(id: Int!): Recipe!
+    login(password: String!): String!
+    addRecipe(recipe: RecipeInput!): Recipe! @loggedIn
+    updateRecipe(id: Int!, recipe: RecipeInput!): Recipe! @loggedIn
+    deleteRecipe(id: Int!): Recipe! @loggedIn
   }
 `
+
+const schema = schemaTransformer(
+  makeExecutableSchema({
+    resolvers,
+    typeDefs,
+  })
+)
+
+export default schema
