@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 import { ExpressContext } from 'apollo-server-express'
 
 const context = ({ req }: ExpressContext) => {
-  const token = req.headers.authorization || ''
+  const xToken = req.headers['x-token']
+  const token = Array.isArray(xToken) ? xToken[0] : xToken
 
   try {
     if (process.env.JWT_SECRET && token) {

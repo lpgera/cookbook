@@ -60,6 +60,7 @@ export type Mutation = {
   __typename?: 'Mutation'
   addRecipe: Recipe
   deleteRecipe: Recipe
+  login: Scalars['String']
   updateRecipe: Recipe
 }
 
@@ -69,6 +70,10 @@ export type MutationAddRecipeArgs = {
 
 export type MutationDeleteRecipeArgs = {
   id: Scalars['Int']
+}
+
+export type MutationLoginArgs = {
+  password: Scalars['String']
 }
 
 export type MutationUpdateRecipeArgs = {

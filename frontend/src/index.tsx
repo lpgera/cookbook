@@ -1,25 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import '@fontsource/roboto'
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material'
 import App from './App'
-
-const apolloClient = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache(),
-  defaultOptions: {
-    query: {
-      fetchPolicy: 'network-only',
-    },
-    watchQuery: {
-      fetchPolicy: 'cache-and-network',
-    },
-    mutate: {
-      fetchPolicy: 'network-only',
-    },
-  },
-})
 
 const theme = createTheme({
   palette: {
@@ -52,9 +35,7 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ApolloProvider client={apolloClient}>
-        <App />
-      </ApolloProvider>
+      <App />
     </ThemeProvider>
   </React.StrictMode>
 )
