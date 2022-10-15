@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "A simple cookbook application",
   "scripts": {
-    "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
+    "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\"",
+    "build": "npm run -w frontend build && npx -w backend prisma generate",
+    "start": "npm run -w backend start"
   },
   "author": "lpgera",
   "license": "MIT",
