@@ -89,7 +89,15 @@ export default {
   Mutation: {
     login: (_, { password }) => {
       if (process.env.JWT_SECRET && password === process.env.PASSWORD) {
-        return jwt.sign('cookbook', process.env.JWT_SECRET)
+        return jwt.sign(
+          {
+            token: 'cookbook',
+          },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: process.env.JWT_EXPIRY ?? '7 day',
+          }
+        )
       }
       throw new Error('Invalid password')
     },
