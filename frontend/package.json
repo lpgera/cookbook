@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "@apollo/client": "^3.7.0",
-    "@emotion/react": "^11.10.4",
+    "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.4",
     "@fontsource/roboto": "^4.5.8",
     "@graphql-codegen/cli": "^2.13.7",
