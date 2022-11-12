@@ -93,7 +93,7 @@ export default {
           unit: 'asc',
         },
       })
-      return ingredients.map((i) => i.unit)
+      return ingredients.map((i) => i.unit).filter(Boolean)
     },
   },
   Mutation: {
