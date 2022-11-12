@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "prisma migrate deploy && ts-node --transpile-only index.ts",
-    "dev": "nodemon -e 'ts,json' --exec 'ts-node index.ts'",
+    "dev": "prisma migrate dev && nodemon -e 'ts,json' --exec 'ts-node index.ts'",
     "prisma-migrate-dev": "prisma migrate dev",
     "prisma-migrate-reset": "prisma migrate reset",
     "graphql-codegen": "graphql-codegen"
