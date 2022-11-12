@@ -58,7 +58,11 @@ export default {
   },
   Query: {
     recipes: () => {
-      return prisma.recipe.findMany()
+      return prisma.recipe.findMany({
+        orderBy: {
+          name: 'asc',
+        },
+      })
     },
     recipe: (_, { id }) => {
       return prisma.recipe.findFirstOrThrow({
@@ -73,6 +77,9 @@ export default {
           name: true,
         },
         distinct: ['name'],
+        orderBy: {
+          name: 'asc',
+        },
       })
       return ingredients.map((i) => i.name)
     },
@@ -82,6 +89,9 @@ export default {
           unit: true,
         },
         distinct: ['unit'],
+        orderBy: {
+          unit: 'asc',
+        },
       })
       return ingredients.map((i) => i.unit)
     },
