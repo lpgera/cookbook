@@ -9,5 +9,6 @@ export type RecipesQuery = {
     id: number
     name: string
     description: string
+    categories: Array<string>
   }>
 }

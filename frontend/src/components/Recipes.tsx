@@ -24,6 +24,7 @@ function Recipes() {
           id
           name
           description
+          categories
         }
       }
     `
@@ -64,9 +65,15 @@ function Recipes() {
                 >
                   {r.description}
                 </Typography>
-                <Box>
-                  <Chip label="category" color="primary" size="small" />
-                </Box>
+                {r.categories.length ? (
+                  <Box>
+                    {r.categories.map((c) => (
+                      <React.Fragment key={c}>
+                        <Chip label={c} color="primary" size="small" />{' '}
+                      </React.Fragment>
+                    ))}
+                  </Box>
+                ) : null}
               </CardContent>
             </Card>
           </Grid>

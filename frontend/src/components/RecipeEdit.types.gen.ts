@@ -11,6 +11,7 @@ export type RecipeQuery = {
     id: number
     name: string
     description: string
+    categories: Array<string>
     instructions: string
     ingredientGroups: Array<{
       __typename?: 'IngredientGroup'

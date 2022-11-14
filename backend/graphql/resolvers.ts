@@ -55,6 +55,21 @@ export default {
         },
       })
     },
+    categories: async ({ id: recipeId }) => {
+      const categories = await prisma.category.findMany({
+        where: {
+          recipes: {
+            some: {
+              id: recipeId,
+            },
+          },
+        },
+        select: {
+          name: true,
+        },
+      })
+      return categories.map((c) => c.name)
+    },
   },
   Query: {
     recipes: () => {
@@ -70,6 +85,10 @@ export default {
           id,
         },
       })
+    },
+    categories: async () => {
+      const categories = await prisma.category.findMany()
+      return categories.map((c) => c.name)
     },
     ingredients: async () => {
       const ingredients = await prisma.ingredient.findMany({
@@ -128,6 +147,12 @@ export default {
               },
             })),
           },
+          categories: {
+            connectOrCreate: recipe.categories.map((name) => ({
+              where: { name },
+              create: { name },
+            })),
+          },
         },
       }),
     updateRecipe: async (_, { id: recipeId, recipe }) => {
@@ -135,6 +160,16 @@ export default {
         prisma.ingredientGroup.deleteMany({
           where: {
             recipeId,
+          },
+        }),
+        prisma.recipe.update({
+          where: {
+            id: recipeId,
+          },
+          data: {
+            categories: {
+              set: [],
+            },
           },
         }),
         prisma.recipe.update({
@@ -156,8 +191,20 @@ export default {
                 },
               })),
             },
+            categories: {
+              connectOrCreate: recipe.categories.map((name) => ({
+                where: { name },
+                create: { name },
+              })),
+            },
           },
         }),
+        prisma.$executeRaw`
+          delete from "Category" where not exists(
+              select * from "_CategoryToRecipe" 
+              where "_CategoryToRecipe"."A" = "Category"."id"
+          )
+        `,
       ])
 
       return prisma.recipe.findFirstOrThrow({
@@ -166,11 +213,21 @@ export default {
         },
       })
     },
-    deleteRecipe: (_, { id }) =>
-      prisma.recipe.delete({
+    deleteRecipe: async (_, { id }) => {
+      const recipe = await prisma.recipe.delete({
         where: {
           id,
         },
-      }),
+      })
+
+      await prisma.$executeRaw`
+        delete from "Category" where not exists(
+            select * from "_CategoryToRecipe" 
+            where "_CategoryToRecipe"."A" = "Category"."id"
+        )
+      `
+
+      return recipe
+    },
   },
 } as Resolvers

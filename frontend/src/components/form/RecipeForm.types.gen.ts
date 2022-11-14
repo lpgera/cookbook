@@ -1,12 +1,10 @@
 import * as Types from '../../graphql.types.gen'
 
-export type IngredientsQueryVariables = Types.Exact<{ [key: string]: never }>
+export type GlobalsQueryVariables = Types.Exact<{ [key: string]: never }>
 
-export type IngredientsQuery = {
+export type GlobalsQuery = {
   __typename?: 'Query'
   ingredients: Array<string>
+  units: Array<string>
+  categories: Array<string>
 }
-
-export type UnitsQueryVariables = Types.Exact<{ [key: string]: never }>
-
-export type UnitsQuery = { __typename?: 'Query'; units: Array<string> }

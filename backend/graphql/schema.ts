@@ -16,6 +16,7 @@ const typeDefs = gql`
     description: String!
     instructions: String!
     ingredientGroups: [IngredientGroup!]!
+    categories: [String!]!
   }
 
   type IngredientGroup {
@@ -43,6 +44,7 @@ const typeDefs = gql`
   type Query {
     recipes: [Recipe!]! @loggedIn
     recipe(id: Int!): Recipe! @loggedIn
+    categories: [String!]! @loggedIn
     ingredients: [String!]! @loggedIn
     units: [String!]! @loggedIn
   }
@@ -63,6 +65,7 @@ const typeDefs = gql`
   input RecipeInput {
     name: String!
     description: String!
+    categories: [String!]!
     instructions: String!
     ingredientGroups: [IngredientGroupInput!]!
   }

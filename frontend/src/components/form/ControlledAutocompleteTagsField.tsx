@@ -1,5 +1,5 @@
 import React from 'react'
-import { Autocomplete, TextField } from '@mui/material'
+import { Autocomplete, Chip, TextField } from '@mui/material'
 import {
   Control,
   Controller,
@@ -8,7 +8,7 @@ import {
   RegisterOptions,
 } from 'react-hook-form'
 
-const ControlledAutocompleteField = <T extends FieldValues>({
+const ControlledAutocompleteTagsField = <T extends FieldValues>({
   name,
   label,
   options,
@@ -32,6 +32,8 @@ const ControlledAutocompleteField = <T extends FieldValues>({
       rules={rules}
       render={({ field: { onBlur, onChange, ref, value } }) => (
         <Autocomplete
+          fullWidth
+          multiple
           options={options}
           style={{
             display: 'inline-block',
@@ -41,12 +43,21 @@ const ControlledAutocompleteField = <T extends FieldValues>({
           value={value}
           onBlur={onBlur}
           onChange={(e, v) => onChange(v)}
+          renderTags={(value: readonly string[], getTagProps) =>
+            value.map((option: string, index: number) => (
+              <Chip
+                variant="filled"
+                size="small"
+                label={option}
+                {...getTagProps({ index })}
+              />
+            ))
+          }
           renderInput={(params) => (
             <TextField
               {...params}
               inputRef={ref}
               error={error}
-              onChange={(e) => onChange(e.target.value)}
               size="small"
               label={label}
             />
@@ -57,4 +68,4 @@ const ControlledAutocompleteField = <T extends FieldValues>({
   )
 }
 
-export default ControlledAutocompleteField
+export default ControlledAutocompleteTagsField

@@ -47,6 +47,9 @@ async function seed() {
           },
         ],
       },
+      categories: {
+        create: [{ name: 'Breakfast' }, { name: 'Eggs' }],
+      },
     },
   })
 }

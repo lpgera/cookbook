@@ -2,7 +2,15 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ReactMarkdown from 'react-markdown'
-import { Card, CardContent, Divider, Box, Typography, Fab } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  Divider,
+  Box,
+  Typography,
+  Fab,
+  Chip,
+} from '@mui/material'
 import { Edit, Delete } from '@mui/icons-material'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 import Loading from './utils/Loading'
@@ -67,6 +75,7 @@ const Recipe = () => {
           id
           name
           description
+          categories
           instructions
           ingredientGroups {
             id
@@ -115,6 +124,16 @@ const Recipe = () => {
               {data.recipe.name}
             </Typography>
           </Box>
+          {data.recipe.categories.map((c) => (
+            <React.Fragment key={c}>
+              <Chip
+                label={c}
+                size="small"
+                color="primary"
+                style={{ marginBottom: 8 }}
+              />{' '}
+            </React.Fragment>
+          ))}
           {data.recipe.description ? (
             <Typography variant="body1">{data.recipe.description}</Typography>
           ) : null}

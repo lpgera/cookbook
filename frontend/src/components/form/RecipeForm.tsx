@@ -5,7 +5,8 @@ import { Fab, TextField, Typography } from '@mui/material'
 import { Save } from '@mui/icons-material'
 import IngredientGroupFieldArray from './IngredientGroupFieldArray'
 import FormData from './FormData.type'
-import { IngredientsQuery, UnitsQuery } from './RecipeForm.types.gen'
+import { GlobalsQuery } from './RecipeForm.types.gen'
+import ControlledAutocompleteTagsField from './ControlledAutocompleteTagsField'
 
 const RecipeForm = ({
   control,
@@ -18,14 +19,11 @@ const RecipeForm = ({
   formState: FormState<FormData>
   onSubmit: () => Promise<any>
 }) => {
-  const { data: ingredientsData } = useQuery<IngredientsQuery>(gql`
-    query Ingredients {
+  const { data } = useQuery<GlobalsQuery>(gql`
+    query Globals {
       ingredients
-    }
-  `)
-  const { data: unitsData } = useQuery<UnitsQuery>(gql`
-    query Units {
       units
+      categories
     }
   `)
 
@@ -49,14 +47,22 @@ const RecipeForm = ({
           fullWidth
         />
       </div>
+      <div>
+        <ControlledAutocompleteTagsField
+          name={'categories'}
+          label={'Categories'}
+          options={data?.categories ?? []}
+          control={control}
+        />
+      </div>
 
       <Typography variant="h5">Ingredients</Typography>
       <IngredientGroupFieldArray
         control={control}
         register={register}
         formState={formState}
-        ingredients={ingredientsData?.ingredients ?? []}
-        units={unitsData?.units ?? []}
+        ingredients={data?.ingredients ?? []}
+        units={data?.units ?? []}
       />
 
       <Typography variant="h5">Instructions</Typography>

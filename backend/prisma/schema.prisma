@@ -18,6 +18,7 @@ model Recipe {
   description      String?
   instructions     String?
   ingredientGroups IngredientGroup[]
+  categories       Category[]
 }
 
 model IngredientGroup {
@@ -43,4 +44,12 @@ model Ingredient {
 
   @@index([name])
   @@index([unit])
+}
+
+model Category {
+  id        Int             @id @default(autoincrement())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  name      String          @db.VarChar(511) @unique
+  recipes   Recipe[]
 }

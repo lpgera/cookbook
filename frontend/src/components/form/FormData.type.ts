@@ -1,6 +1,7 @@
 type FormData = {
   name: string
   description: string
+  categories: string[]
   instructions: string
   ingredientGroups: {
     id?: number

@@ -13,6 +13,7 @@ import FormData from './form/FormData.type'
 const RecipeAdd = () => {
   const { control, register, formState, handleSubmit } = useForm<FormData>({
     defaultValues: {
+      categories: [],
       ingredientGroups: [
         {
           name: '',

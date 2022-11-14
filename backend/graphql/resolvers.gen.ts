@@ -101,6 +101,7 @@ export type MutationUpdateRecipeArgs = {
 
 export type Query = {
   __typename?: 'Query'
+  categories: Array<Scalars['String']>
   ingredients: Array<Scalars['String']>
   recipe: Recipe
   recipes: Array<Recipe>
@@ -113,6 +114,7 @@ export type QueryRecipeArgs = {
 
 export type Recipe = {
   __typename?: 'Recipe'
+  categories: Array<Scalars['String']>
   createdAt: Scalars['Date']
   description: Scalars['String']
   id: Scalars['Int']
@@ -123,6 +125,7 @@ export type Recipe = {
 }
 
 export type RecipeInput = {
+  categories: Array<Scalars['String']>
   description: Scalars['String']
   ingredientGroups: Array<IngredientGroupInput>
   instructions: Scalars['String']
@@ -351,6 +354,11 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = ResolversObject<{
+  categories?: Resolver<
+    Array<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   ingredients?: Resolver<
     Array<ResolversTypes['String']>,
     ParentType,
@@ -370,6 +378,11 @@ export type RecipeResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Recipe'] = ResolversParentTypes['Recipe']
 > = ResolversObject<{
+  categories?: Resolver<
+    Array<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>

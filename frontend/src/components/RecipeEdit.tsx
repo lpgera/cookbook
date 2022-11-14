@@ -4,7 +4,7 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import { useForm } from 'react-hook-form'
 import { Card, CardContent, Typography } from '@mui/material'
 import RecipeForm from './form/RecipeForm'
-import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
+import { RecipeQuery, RecipeQueryVariables } from './RecipeEdit.types.gen'
 import {
   UpdateRecipeMutation,
   UpdateRecipeMutationVariables,
@@ -23,6 +23,7 @@ const RecipeEdit = () => {
           id
           name
           description
+          categories
           instructions
           ingredientGroups {
             id
@@ -53,6 +54,7 @@ const RecipeEdit = () => {
     reset({
       name: data?.recipe.name,
       description: data?.recipe.description,
+      categories: data?.recipe.categories ?? [],
       instructions: data?.recipe.instructions,
       ingredientGroups: data?.recipe.ingredientGroups.map(
         ({ id, name, ingredients }) => ({
