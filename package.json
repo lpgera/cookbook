@@ -14,7 +14,11 @@
   "type": "module",
   "engines": {
     "node": "^19.0.0",
-    "npm": "^8.19.2"
+    "npm": ">8.0.0"
+  },
+  "volta": {
+    "node": "19.1.0",
+    "npm": "9.1.2"
   },
   "workspaces": [
     "backend",
