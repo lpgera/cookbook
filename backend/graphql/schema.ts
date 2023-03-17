@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { schemaTransformer } from './loggedInDirective'
 import resolvers from './resolvers'

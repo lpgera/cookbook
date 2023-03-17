@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
-import { ExpressContext } from 'apollo-server-express'
+import express from 'express'
 
-const context = ({ req }: ExpressContext) => {
+const context = async ({ req }: { req: express.Request }) => {
   const xToken = req.headers['x-token']
   const token = Array.isArray(xToken) ? xToken[0] : xToken
 
@@ -17,6 +17,6 @@ const context = ({ req }: ExpressContext) => {
   return { isLoggedIn: false }
 }
 
-export type Context = ReturnType<typeof context>
+export type Context = Awaited<ReturnType<typeof context>>
 
 export default context

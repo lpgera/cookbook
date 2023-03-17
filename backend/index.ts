@@ -1,10 +1,16 @@
 import path from 'path'
+import http from 'http'
 import express from 'express'
-import { ApolloServer } from 'apollo-server-express'
+import cors from 'cors'
+import { json } from 'body-parser'
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import schema from './graphql/schema'
-import context from './graphql/context'
+import context, { Context } from './graphql/context'
 
 const app = express()
+const httpServer = http.createServer(app)
 const port = process.env.PORT ?? 4000
 
 app.use(
@@ -12,21 +18,29 @@ app.use(
     maxAge: '30 days',
   })
 )
+
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 })
 
-const apolloServer = new ApolloServer({
+const apolloServer = new ApolloServer<Context>({
   schema,
-  context,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
 
 apolloServer
   .start()
   .then(() => {
-    apolloServer.applyMiddleware({ app })
+    app.use(
+      '/graphql',
+      cors<cors.CorsRequest>(),
+      json(),
+      expressMiddleware(apolloServer, {
+        context,
+      })
+    )
 
-    app.listen({ port }, () => {
+    httpServer.listen({ port }, () => {
       console.log(`Server listening on port ${port}`)
     })
   })
