@@ -13,7 +13,7 @@
     "@graphql-codegen/typescript": "^3.0.2",
     "@graphql-codegen/typescript-resolvers": "^3.1.1",
     "@types/node": "^18.15.3",
-    "nodemon": "^2.0.21",
+    "nodemon": "^2.0.22",
     "prisma": "^4.11.0",
     "typescript": "^5.0.2"
   },
