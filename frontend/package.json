@@ -9,7 +9,7 @@
     "@graphql-codegen/cli": "^3.3.0",
     "@graphql-codegen/near-operation-file-preset": "^2.5.0",
     "@graphql-codegen/typescript": "^3.0.4",
-    "@graphql-codegen/typescript-operations": "^3.0.3",
+    "@graphql-codegen/typescript-operations": "^3.0.4",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.1",
     "@types/node": "^18.16.2",
