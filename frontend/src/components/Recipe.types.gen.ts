@@ -1,7 +1,7 @@
 import * as Types from '../graphql.types.gen'
 
 export type DeleteRecipeMutationVariables = Types.Exact<{
-  id: Types.Scalars['Int']
+  id: Types.Scalars['Int']['input']
 }>
 
 export type DeleteRecipeMutation = {
@@ -10,7 +10,7 @@ export type DeleteRecipeMutation = {
 }
 
 export type RecipeQueryVariables = Types.Exact<{
-  id: Types.Scalars['Int']
+  id: Types.Scalars['Int']['input']
 }>
 
 export type RecipeQuery = {
