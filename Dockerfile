@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY frontend/package.json frontend/
 
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY frontend frontend
 
@@ -18,7 +18,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY backend/package.json backend/
 
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 COPY . .
 
@@ -26,9 +26,7 @@ RUN npx -w backend prisma generate
 
 FROM node:20-slim as TARGET
 
-RUN apt-get update
-
-RUN apt-get install -y openssl
+RUN apt-get update && apt-get install -y openssl
 
 ENV NODE_ENV production
 
