@@ -10,7 +10,7 @@
     "@graphql-codegen/near-operation-file-preset": "^2.5.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
-    "@mui/icons-material": "^5.14.8",
+    "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.8",
     "@types/node": "^20.6.0",
     "@types/react": "^18.2.21",
