@@ -16,7 +16,7 @@
     "prisma": "^5.4.1"
   },
   "dependencies": {
-    "@apollo/server": "^4.9.3",
+    "@apollo/server": "^4.9.4",
     "@prisma/client": "^5.4.1",
     "@types/cors": "^2.8.14",
     "@types/jsonwebtoken": "^9.0.3",
