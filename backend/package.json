@@ -19,7 +19,7 @@
     "@apollo/server": "^4.9.4",
     "@prisma/client": "^5.4.2",
     "@types/cors": "^2.8.15",
-    "@types/jsonwebtoken": "^9.0.3",
+    "@types/jsonwebtoken": "^9.0.4",
     "@types/node": "^20.8.6",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
