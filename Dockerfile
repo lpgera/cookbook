@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM node:20 as FRONTEND
+FROM --platform=$BUILDPLATFORM node:21 as FRONTEND
 
 WORKDIR /usr/src/app
 
@@ -11,7 +11,7 @@ COPY frontend frontend
 
 RUN npm run build -w frontend
 
-FROM node:20 as DEPENDENCIES
+FROM node:21 as DEPENDENCIES
 
 WORKDIR /usr/src/app
 
@@ -24,7 +24,7 @@ COPY . .
 
 RUN npx -w backend prisma generate
 
-FROM node:20-slim as TARGET
+FROM node:21-slim as TARGET
 
 RUN apt-get update && apt-get install -y openssl
 
