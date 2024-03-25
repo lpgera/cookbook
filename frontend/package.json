@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "devDependencies": {
-    "@apollo/client": "^3.9.8",
+    "@apollo/client": "^3.9.9",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.12",
