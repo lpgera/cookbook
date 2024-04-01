@@ -72,12 +72,15 @@ export default {
     },
   },
   Query: {
-    recipes: () => {
-      return prisma.recipe.findMany({
+    recipes: async () => {
+      console.time('recipes')
+      const recipes = await prisma.recipe.findMany({
         orderBy: {
           name: 'asc',
         },
       })
+      console.timeEnd('recipes')
+      return recipes
     },
     recipe: (_, { id }) => {
       return prisma.recipe.findFirstOrThrow({
@@ -125,7 +128,7 @@ export default {
           process.env.JWT_SECRET,
           {
             expiresIn: process.env.JWT_EXPIRY ?? '7 day',
-          }
+          },
         )
       }
       throw new Error('Invalid password')
