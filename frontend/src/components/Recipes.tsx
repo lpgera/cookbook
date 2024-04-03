@@ -17,18 +17,16 @@ import Error from './utils/Error'
 
 function Recipes() {
   const navigate = useNavigate()
-  const { loading, error, data } = useQuery<RecipesQuery>(
-    gql`
-      query Recipes {
-        recipes {
-          id
-          name
-          description
-          categories
-        }
+  const { loading, error, data } = useQuery<RecipesQuery>(gql`
+    query Recipes {
+      recipes {
+        id
+        name
+        description
+        categories
       }
-    `
-  )
+    }
+  `)
 
   if (loading) {
     return <Loading />

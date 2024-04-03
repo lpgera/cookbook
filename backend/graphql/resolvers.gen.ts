@@ -9,12 +9,10 @@ import {
   PrismaIngredient,
 } from './typeMappings'
 import { Context } from './context'
-export type Maybe<T> = T extends PromiseLike<infer U>
-  ? Promise<U | null>
-  : T | null
-export type InputMaybe<T> = T extends PromiseLike<infer U>
-  ? Promise<U | null>
-  : T | null
+export type Maybe<T> =
+  T extends PromiseLike<infer U> ? Promise<U | null> : T | null
+export type InputMaybe<T> =
+  T extends PromiseLike<infer U> ? Promise<U | null> : T | null
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
 }
@@ -26,7 +24,7 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
 }
 export type MakeEmpty<
   T extends { [key: string]: unknown },
-  K extends keyof T
+  K extends keyof T,
 > = { [_ in K]?: never }
 export type Incremental<T> =
   | T
@@ -179,7 +177,7 @@ export interface SubscriptionSubscriberObject<
   TKey extends string,
   TParent,
   TContext,
-  TArgs
+  TArgs,
 > {
   subscribe: SubscriptionSubscribeFn<
     { [key in TKey]: TResult },
@@ -205,7 +203,7 @@ export type SubscriptionObject<
   TKey extends string,
   TParent,
   TContext,
-  TArgs
+  TArgs,
 > =
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>
@@ -215,7 +213,7 @@ export type SubscriptionResolver<
   TKey extends string,
   TParent = {},
   TContext = {},
-  TArgs = {}
+  TArgs = {},
 > =
   | ((
       ...args: any[]
@@ -240,7 +238,7 @@ export type DirectiveResolverFn<
   TResult = {},
   TParent = {},
   TContext = {},
-  TArgs = {}
+  TArgs = {},
 > = (
   next: NextResolverFn<TResult>,
   parent: TParent,
@@ -287,7 +285,7 @@ export type LoggedInDirectiveResolver<
   Result,
   Parent,
   ContextType = Context,
-  Args = LoggedInDirectiveArgs
+  Args = LoggedInDirectiveArgs,
 > = DirectiveResolverFn<Result, Parent, ContextType, Args>
 
 export interface DateScalarConfig
@@ -297,7 +295,8 @@ export interface DateScalarConfig
 
 export type IngredientResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Ingredient'] = ResolversParentTypes['Ingredient']
+  ParentType extends
+    ResolversParentTypes['Ingredient'] = ResolversParentTypes['Ingredient'],
 > = ResolversObject<{
   amount?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
@@ -313,7 +312,8 @@ export type IngredientResolvers<
 
 export type IngredientGroupResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['IngredientGroup'] = ResolversParentTypes['IngredientGroup']
+  ParentType extends
+    ResolversParentTypes['IngredientGroup'] = ResolversParentTypes['IngredientGroup'],
 > = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
@@ -331,7 +331,8 @@ export type IngredientGroupResolvers<
 
 export type MutationResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+  ParentType extends
+    ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation'],
 > = ResolversObject<{
   addRecipe?: Resolver<
     ResolversTypes['Recipe'],
@@ -361,7 +362,8 @@ export type MutationResolvers<
 
 export type QueryResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
+  ParentType extends
+    ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
 > = ResolversObject<{
   categories?: Resolver<
     Array<ResolversTypes['String']>,
@@ -385,7 +387,8 @@ export type QueryResolvers<
 
 export type RecipeResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Recipe'] = ResolversParentTypes['Recipe']
+  ParentType extends
+    ResolversParentTypes['Recipe'] = ResolversParentTypes['Recipe'],
 > = ResolversObject<{
   categories?: Resolver<
     Array<ResolversTypes['String']>,
