@@ -5,7 +5,7 @@ import { Resolvers } from './resolvers.gen'
 
 const prisma = new PrismaClient()
 
-export default {
+const resolvers: Resolvers = {
   Date: new GraphQLScalarType<Date, string>({
     name: 'Date',
     description: 'Date custom scalar type',
@@ -24,7 +24,7 @@ export default {
   }),
   Ingredient: {
     group: ({ groupId: id }) => {
-      return prisma.ingredientGroup.findFirstOrThrow({
+      return prisma.ingredientGroup.findUniqueOrThrow({
         where: {
           id,
         },
@@ -33,30 +33,33 @@ export default {
   },
   IngredientGroup: {
     recipe: ({ recipeId: id }) => {
-      return prisma.recipe.findFirstOrThrow({
+      return prisma.recipe.findUniqueOrThrow({
         where: {
           id,
         },
       })
     },
-    ingredients: ({ id: groupId }) => {
-      return prisma.ingredient.findMany({
-        where: {
-          groupId,
-        },
-      })
+    ingredients: async ({ id: groupId }) => {
+      return (
+        (await prisma.ingredientGroup
+          .findUnique({
+            where: {
+              id: groupId,
+            },
+          })
+          .ingredients()) || []
+      )
     },
   },
   Recipe: {
-    ingredientGroups({ id: recipeId }) {
-      return prisma.ingredientGroup.findMany({
-        where: {
-          recipeId,
-        },
-      })
+    ingredientGroups: async ({ id: recipeId }) => {
+      return (
+        (await prisma.recipe
+          .findUnique({ where: { id: recipeId } })
+          .ingredientGroups()) || []
+      )
     },
     categories: async ({ id: recipeId }) => {
-      // prisma data loader only works with findUnique calls
       const categories =
         (await prisma.recipe
           .findUnique({ where: { id: recipeId } })
@@ -77,7 +80,7 @@ export default {
       })
     },
     recipe: (_, { id }) => {
-      return prisma.recipe.findFirstOrThrow({
+      return prisma.recipe.findUniqueOrThrow({
         where: {
           id,
         },
@@ -204,7 +207,7 @@ export default {
         `,
       ])
 
-      return prisma.recipe.findFirstOrThrow({
+      return prisma.recipe.findUniqueOrThrow({
         where: {
           id: recipeId,
         },
@@ -227,4 +230,6 @@ export default {
       return recipe
     },
   },
-} as Resolvers
+}
+
+export default resolvers
