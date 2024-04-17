@@ -154,7 +154,7 @@ const Recipe = () => {
               <ul>
                 {group.ingredients.map((ingredient, index) => (
                   <li key={index}>
-                    {ingredient.name}, {ingredient.amount} {ingredient.unit}
+                    {ingredient.amount} {ingredient.unit} {ingredient.name}
                   </li>
                 ))}
               </ul>

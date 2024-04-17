@@ -40,6 +40,25 @@ const IngredientFieldArray = ({
           key={field.id}
         >
           <Grid item>
+            <TextField
+              size="small"
+              {...register(
+                `ingredientGroups.${groupIndex}.ingredients.${index}.amount`
+              )}
+              label="Amount"
+              style={{ width: 100 }}
+            />
+          </Grid>
+          <Grid item>
+            <ControlledAutocompleteField
+              name={`ingredientGroups.${groupIndex}.ingredients.${index}.unit`}
+              label="Unit"
+              options={units}
+              style={{ width: 195 }}
+              control={control}
+            />
+          </Grid>
+          <Grid item>
             <ControlledAutocompleteField
               name={`ingredientGroups.${groupIndex}.ingredients.${index}.name`}
               label="Ingredient name"
@@ -49,25 +68,6 @@ const IngredientFieldArray = ({
                   ?.ingredients?.[index]?.name
               }
               options={ingredients}
-              style={{ width: 195 }}
-              control={control}
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              size="small"
-              {...register(
-                `ingredientGroups.${groupIndex}.ingredients.${index}.amount`
-              )}
-              label={'Amount'}
-              style={{ width: 100 }}
-            />
-          </Grid>
-          <Grid item>
-            <ControlledAutocompleteField
-              name={`ingredientGroups.${groupIndex}.ingredients.${index}.unit`}
-              label="Unit"
-              options={units}
               style={{ width: 195 }}
               control={control}
             />
