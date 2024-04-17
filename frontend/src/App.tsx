@@ -23,6 +23,7 @@ function App() {
           <Container>
             <Routes>
               <Route path="/" element={<Recipes />} />
+              <Route path="category/:category" element={<Recipes />} />
               <Route path="new" element={<RecipeAdd />} />
               <Route path=":id" element={<Recipe />} />
               <Route path=":id/edit" element={<RecipeEdit />} />

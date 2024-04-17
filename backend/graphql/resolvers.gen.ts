@@ -119,6 +119,10 @@ export type QueryRecipeArgs = {
   id: Scalars['Int']['input']
 }
 
+export type QueryRecipesArgs = {
+  category?: InputMaybe<Scalars['String']['input']>
+}
+
 export type Recipe = {
   __typename?: 'Recipe'
   categories: Array<Scalars['String']['output']>
@@ -381,7 +385,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryRecipeArgs, 'id'>
   >
-  recipes?: Resolver<Array<ResolversTypes['Recipe']>, ParentType, ContextType>
+  recipes?: Resolver<
+    Array<ResolversTypes['Recipe']>,
+    ParentType,
+    ContextType,
+    Partial<QueryRecipesArgs>
+  >
   units?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
 }>
 

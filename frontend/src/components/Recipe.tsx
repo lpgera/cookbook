@@ -66,6 +66,7 @@ const ActionMenu = ({ id }: { id: number }) => {
 }
 
 const Recipe = () => {
+  const navigate = useNavigate()
   const { id: rawId } = useParams()
   const id = parseInt(rawId ?? '0')
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
@@ -131,6 +132,7 @@ const Recipe = () => {
                 size="small"
                 color="primary"
                 style={{ marginBottom: 8 }}
+                onClick={() => navigate(`/category/${c}`)}
               />{' '}
             </React.Fragment>
           ))}

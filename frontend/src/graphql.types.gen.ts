@@ -103,6 +103,10 @@ export type QueryRecipeArgs = {
   id: Scalars['Int']['input']
 }
 
+export type QueryRecipesArgs = {
+  category?: InputMaybe<Scalars['String']['input']>
+}
+
 export type Recipe = {
   __typename?: 'Recipe'
   categories: Array<Scalars['String']['output']>

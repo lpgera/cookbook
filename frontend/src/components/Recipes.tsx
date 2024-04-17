@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
 import {
   Box,
@@ -11,34 +11,45 @@ import {
   Typography,
 } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import { RecipesQuery } from './Recipes.types.gen'
+import { RecipesQuery, RecipesQueryVariables } from './Recipes.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
+import Categories from './Categories'
 
 function Recipes() {
   const navigate = useNavigate()
-  const { loading, error, data } = useQuery<RecipesQuery>(gql`
-    query Recipes {
-      recipes {
-        id
-        name
-        description
-        categories
-      }
-    }
-  `)
+  const { category } = useParams()
 
-  if (loading) {
-    return <Loading />
-  }
+  const { error, data } = useQuery<RecipesQuery, RecipesQueryVariables>(
+    gql`
+      query Recipes($category: String) {
+        recipes(category: $category) {
+          id
+          name
+          description
+          categories
+        }
+      }
+    `,
+    {
+      variables: {
+        category,
+      },
+    }
+  )
+
   if (error) {
     return <Error message={error.message} />
+  }
+  if (!data) {
+    return <Loading />
   }
 
   const recipes = data?.recipes ?? []
 
   return (
     <>
+      <Categories />
       <Grid container spacing={4}>
         {recipes.map((r, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
@@ -46,7 +57,7 @@ function Recipes() {
               style={{
                 cursor: 'pointer',
               }}
-              onClick={() => navigate(`${r.id}`)}
+              onClick={() => navigate(`/${r.id}`)}
             >
               <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography
@@ -67,7 +78,15 @@ function Recipes() {
                   <Box>
                     {r.categories.map((c) => (
                       <React.Fragment key={c}>
-                        <Chip label={c} color="primary" size="small" />{' '}
+                        <Chip
+                          label={c}
+                          color="primary"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(`/category/${c}`)
+                          }}
+                        />{' '}
                       </React.Fragment>
                     ))}
                   </Box>

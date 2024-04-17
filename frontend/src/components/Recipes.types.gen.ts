@@ -1,6 +1,8 @@
 import * as Types from '../graphql.types.gen'
 
-export type RecipesQueryVariables = Types.Exact<{ [key: string]: never }>
+export type RecipesQueryVariables = Types.Exact<{
+  category?: Types.InputMaybe<Types.Scalars['String']['input']>
+}>
 
 export type RecipesQuery = {
   __typename?: 'Query'

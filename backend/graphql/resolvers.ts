@@ -72,8 +72,17 @@ const resolvers: Resolvers = {
     },
   },
   Query: {
-    recipes: () => {
+    recipes: (_, { category }) => {
       return prisma.recipe.findMany({
+        where: category
+          ? {
+              categories: {
+                some: {
+                  name: category,
+                },
+              },
+            }
+          : undefined,
         orderBy: {
           name: 'asc',
         },
@@ -125,7 +134,7 @@ const resolvers: Resolvers = {
           process.env.JWT_SECRET,
           {
             expiresIn: process.env.JWT_EXPIRY ?? '7 day',
-          },
+          }
         )
       }
       throw new Error('Invalid password')
