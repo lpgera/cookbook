@@ -1,27 +1,43 @@
-import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useCallback } from 'react'
+import {
+  useParams,
+  Link as RouterLink,
+  useSearchParams,
+} from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
 import {
   Box,
   Card,
   CardContent,
-  Chip,
   Fab,
   Grid,
   Typography,
   Checkbox,
+  Link,
 } from '@mui/material'
 import { Add, ShoppingCart } from '@mui/icons-material'
 import { RecipesQuery, RecipesQueryVariables } from './Recipes.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
 import Categories from './Categories'
+import CategoryChip from './CategoryChip'
 
 function Recipes() {
-  const navigate = useNavigate()
   const { category } = useParams()
-  const [selectedRecipes, setSelectedRecipes] = React.useState<Set<number>>(
-    new Set()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedRecipes =
+    searchParams.get('recipes')?.split(',').filter(Boolean).map(Number) ?? []
+  const setSelectedRecipes = useCallback(
+    (recipes: number[]) => {
+      if (!recipes.length) {
+        setSearchParams({})
+      } else {
+        setSearchParams({
+          recipes: recipes.join(','),
+        })
+      }
+    },
+    [setSearchParams]
   )
 
   const { error, data } = useQuery<RecipesQuery, RecipesQueryVariables>(
@@ -57,12 +73,7 @@ function Recipes() {
       <Grid container spacing={4}>
         {recipes.map((r, index) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-            <Card
-              style={{
-                cursor: 'pointer',
-              }}
-              onClick={() => navigate(`/${r.id}`)}
-            >
+            <Card>
               <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
                 <div
                   style={{
@@ -76,25 +87,20 @@ function Recipes() {
                     style={{ overflow: 'ellipsis', flexGrow: 1 }}
                     noWrap
                   >
-                    {r.name}
+                    <Link href={`/${r.id}`}>{r.name}</Link>
                   </Typography>
                   <Checkbox
                     size="small"
-                    checked={selectedRecipes.has(r.id)}
+                    checked={selectedRecipes.includes(r.id)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedRecipes((prevState) =>
-                          new Set(prevState).add(r.id)
-                        )
+                        setSelectedRecipes([...selectedRecipes, r.id])
                       } else {
-                        setSelectedRecipes((prevState) => {
-                          const newState = new Set(prevState)
-                          newState.delete(r.id)
-                          return newState
-                        })
+                        setSelectedRecipes(
+                          selectedRecipes.filter((id) => id !== r.id)
+                        )
                       }
                     }}
-                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
                 <Typography
@@ -108,15 +114,7 @@ function Recipes() {
                   <Box>
                     {r.categories.map((c) => (
                       <React.Fragment key={c}>
-                        <Chip
-                          label={c}
-                          color="primary"
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            navigate(`/category/${c}`)
-                          }}
-                        />{' '}
+                        <CategoryChip category={c} />{' '}
                       </React.Fragment>
                     ))}
                   </Box>
@@ -126,7 +124,7 @@ function Recipes() {
           </Grid>
         ))}
       </Grid>
-      {selectedRecipes.size > 0 ? (
+      {selectedRecipes.length > 0 ? (
         <Fab
           style={{
             position: 'fixed',
@@ -134,12 +132,11 @@ function Recipes() {
             right: 24,
           }}
           color="secondary"
-          onClick={() =>
-            navigate({
-              pathname: 'shopping-list',
-              search: `?recipes=${Array.from(selectedRecipes).join(',')}`,
-            })
-          }
+          component={RouterLink}
+          to={{
+            pathname: 'shopping-list',
+            search: searchParams.toString(),
+          }}
           aria-label="shopping list"
         >
           <ShoppingCart />
@@ -152,7 +149,7 @@ function Recipes() {
           right: 24,
         }}
         color="secondary"
-        onClick={() => navigate('new')}
+        href={'/new'}
         aria-label="add"
       >
         <Add />

@@ -45,12 +45,7 @@ const ControlledAutocompleteTagsField = <T extends FieldValues>({
           onChange={(e, v) => onChange(v)}
           renderTags={(value: readonly string[], getTagProps) =>
             value.map((option: string, index: number) => (
-              <Chip
-                variant="filled"
-                size="small"
-                label={option}
-                {...getTagProps({ index })}
-              />
+              <Chip size="small" label={option} {...getTagProps({ index })} />
             ))
           }
           renderInput={(params) => (

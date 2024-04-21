@@ -1,12 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
 import { CategoriesQuery } from './Categories.types.gen'
-import { Chip, Grid, Link } from '@mui/material'
+import { Grid } from '@mui/material'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import CategoryChip from './CategoryChip'
 
 const Categories = () => {
-  const navigate = useNavigate()
-
   const { data: { categories = [] } = {} } = useQuery<CategoriesQuery>(gql`
     query Categories {
       categories
@@ -14,23 +12,13 @@ const Categories = () => {
   `)
 
   return (
-    <Grid container spacing={1} marginBottom={2}>
+    <Grid container spacing={1} marginBottom={4}>
       <Grid item key={'all'}>
-        <Chip
-          label={'All recipes'}
-          color="primary"
-          size="small"
-          onClick={() => navigate(`/`)}
-        />
+        <CategoryChip category={'All recipes'} href={'/'} />
       </Grid>
       {categories.map((category) => (
         <Grid item key={category}>
-          <Chip
-            label={category}
-            color="primary"
-            size="small"
-            onClick={() => navigate(`/category/${category}`)}
-          />
+          <CategoryChip category={category} />
         </Grid>
       ))}
     </Grid>

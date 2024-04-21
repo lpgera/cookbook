@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client'
 import '@fontsource/roboto'
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material'
 import App from './App'
-import { LinkProps } from '@mui/material/Link'
 import {
   Link as RouterLink,
   LinkProps as RouterLinkProps,
@@ -34,7 +33,7 @@ const theme = createTheme({
     MuiLink: {
       defaultProps: {
         component: LinkBehavior,
-      } as LinkProps,
+      },
     },
     MuiButtonBase: {
       defaultProps: {

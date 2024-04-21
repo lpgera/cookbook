@@ -2,19 +2,12 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ReactMarkdown from 'react-markdown'
-import {
-  Card,
-  CardContent,
-  Divider,
-  Box,
-  Typography,
-  Fab,
-  Chip,
-} from '@mui/material'
+import { Card, CardContent, Divider, Box, Typography, Fab } from '@mui/material'
 import { Edit, Delete } from '@mui/icons-material'
 import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
+import CategoryChip from './CategoryChip'
 
 const ActionMenu = ({ id }: { id: number }) => {
   const navigate = useNavigate()
@@ -35,7 +28,7 @@ const ActionMenu = ({ id }: { id: number }) => {
           right: 24,
         }}
         color="secondary"
-        onClick={() => navigate('edit')}
+        href="edit"
         aria-label="edit"
       >
         <Edit />
@@ -66,7 +59,6 @@ const ActionMenu = ({ id }: { id: number }) => {
 }
 
 const Recipe = () => {
-  const navigate = useNavigate()
   const { id: rawId } = useParams()
   const id = parseInt(rawId ?? '0')
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
@@ -127,13 +119,7 @@ const Recipe = () => {
           </Box>
           {data.recipe.categories.map((c) => (
             <React.Fragment key={c}>
-              <Chip
-                label={c}
-                size="small"
-                color="primary"
-                style={{ marginBottom: 8 }}
-                onClick={() => navigate(`/category/${c}`)}
-              />{' '}
+              <CategoryChip category={c} />{' '}
             </React.Fragment>
           ))}
           {data.recipe.description ? (
