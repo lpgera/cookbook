@@ -72,17 +72,20 @@ const resolvers: Resolvers = {
     },
   },
   Query: {
-    recipes: (_, { category }) => {
+    recipes: (_, { ids, category }) => {
       return prisma.recipe.findMany({
-        where: category
-          ? {
-              categories: {
-                some: {
-                  name: category,
+        where: {
+          ...(category
+            ? {
+                categories: {
+                  some: {
+                    name: category,
+                  },
                 },
-              },
-            }
-          : undefined,
+              }
+            : undefined),
+          ...(ids?.length ? { id: { in: ids } } : undefined),
+        },
         orderBy: {
           name: 'asc',
         },

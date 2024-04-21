@@ -42,7 +42,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    recipes(category: String): [Recipe!]! @loggedIn
+    recipes(ids: [Int!], category: String): [Recipe!]! @loggedIn
     recipe(id: Int!): Recipe! @loggedIn
     categories: [String!]! @loggedIn
     ingredients: [String!]! @loggedIn

@@ -3,6 +3,20 @@ import ReactDOM from 'react-dom/client'
 import '@fontsource/roboto'
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material'
 import App from './App'
+import { LinkProps } from '@mui/material/Link'
+import {
+  Link as RouterLink,
+  LinkProps as RouterLinkProps,
+} from 'react-router-dom'
+
+const LinkBehavior = React.forwardRef<
+  HTMLAnchorElement,
+  Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }
+>((props, ref) => {
+  const { href, ...other } = props
+  // Map href (Material UI) -> to (react-router)
+  return <RouterLink ref={ref} to={href} {...other} />
+})
 
 const theme = createTheme({
   palette: {
@@ -17,6 +31,16 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiLink: {
+      defaultProps: {
+        component: LinkBehavior,
+      } as LinkProps,
+    },
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: LinkBehavior,
+      },
+    },
     MuiTypography: {
       defaultProps: {
         variantMapping: {

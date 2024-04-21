@@ -105,6 +105,7 @@ export type QueryRecipeArgs = {
 
 export type QueryRecipesArgs = {
   category?: InputMaybe<Scalars['String']['input']>
+  ids?: InputMaybe<Array<Scalars['Int']['input']>>
 }
 
 export type Recipe = {

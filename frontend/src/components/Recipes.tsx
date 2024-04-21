@@ -9,8 +9,9 @@ import {
   Fab,
   Grid,
   Typography,
+  Checkbox,
 } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { Add, ShoppingCart } from '@mui/icons-material'
 import { RecipesQuery, RecipesQueryVariables } from './Recipes.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
@@ -19,6 +20,9 @@ import Categories from './Categories'
 function Recipes() {
   const navigate = useNavigate()
   const { category } = useParams()
+  const [selectedRecipes, setSelectedRecipes] = React.useState<Set<number>>(
+    new Set()
+  )
 
   const { error, data } = useQuery<RecipesQuery, RecipesQueryVariables>(
     gql`
@@ -60,13 +64,39 @@ function Recipes() {
               onClick={() => navigate(`/${r.id}`)}
             >
               <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  variant="h5"
-                  style={{ overflow: 'ellipsis' }}
-                  noWrap
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
                 >
-                  {r.name}
-                </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{ overflow: 'ellipsis', flexGrow: 1 }}
+                    noWrap
+                  >
+                    {r.name}
+                  </Typography>
+                  <Checkbox
+                    size="small"
+                    checked={selectedRecipes.has(r.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedRecipes((prevState) =>
+                          new Set(prevState).add(r.id)
+                        )
+                      } else {
+                        setSelectedRecipes((prevState) => {
+                          const newState = new Set(prevState)
+                          newState.delete(r.id)
+                          return newState
+                        })
+                      }
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
                 <Typography
                   style={{ overflow: 'ellipsis', height: 24 }}
                   noWrap
@@ -96,6 +126,25 @@ function Recipes() {
           </Grid>
         ))}
       </Grid>
+      {selectedRecipes.size > 0 ? (
+        <Fab
+          style={{
+            position: 'fixed',
+            bottom: 96,
+            right: 24,
+          }}
+          color="secondary"
+          onClick={() =>
+            navigate({
+              pathname: 'shopping-list',
+              search: `?recipes=${Array.from(selectedRecipes).join(',')}`,
+            })
+          }
+          aria-label="shopping list"
+        >
+          <ShoppingCart />
+        </Fab>
+      ) : null}
       <Fab
         style={{
           position: 'fixed',
