@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "prisma migrate deploy && ts-node --transpile-only index.ts",
-    "dev": "prisma migrate dev && nodemon -e 'ts,json' --exec 'ts-node index.ts'",
+    "dev": "prisma migrate dev && node --watch -r ts-node/register index.ts",
     "prisma-migrate-dev": "prisma migrate dev",
     "prisma-migrate-reset": "prisma migrate reset",
     "graphql-codegen": "graphql-codegen"
@@ -12,7 +12,6 @@
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.4",
     "@graphql-codegen/typescript-resolvers": "^4.0.6",
-    "nodemon": "^3.1.0",
     "prisma": "^5.12.1"
   },
   "dependencies": {
