@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
+  "type": "module",
   "devDependencies": {
     "@apollo/client": "^3.10.4",
     "@emotion/react": "^11.11.4",
@@ -31,5 +32,8 @@
     "start": "vite",
     "build": "vite build",
     "graphql-codegen": "graphql-codegen"
+  },
+  "volta": {
+    "extends": "../package.json"
   }
 }
