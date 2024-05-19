@@ -3,6 +3,7 @@ import http from 'http'
 import express from 'express'
 import cors from 'cors'
 import { json } from 'body-parser'
+import compression from 'compression'
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
@@ -12,6 +13,8 @@ import context, { Context } from './graphql/context'
 const app = express()
 const httpServer = http.createServer(app)
 const port = process.env.PORT ?? 4000
+
+app.use(compression())
 
 app.use(
   express.static(path.join(__dirname, 'frontend'), {
