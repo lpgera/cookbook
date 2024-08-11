@@ -4,7 +4,7 @@
   "description": "A simple cookbook application",
   "scripts": {
     "prepare": "husky || true",
-    "check-updates": "ncu -i -ws --root",
+    "check-updates": "ncu -i -ws",
     "browserslist-update": "npx update-browserslist-db@latest",
     "build": "npm run -w frontend build && npx -w backend prisma generate",
     "start": "npm run -w backend start"
@@ -26,7 +26,7 @@
   "devDependencies": {
     "husky": "^9.1.4",
     "lint-staged": "^15.2.8",
-    "npm-check-updates": "^16.14.20",
+    "npm-check-updates": "^17.0.6",
     "prettier": "^3.3.3"
   },
   "lint-staged": {
