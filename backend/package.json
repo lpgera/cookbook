@@ -12,7 +12,7 @@
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.9",
     "@graphql-codegen/typescript-resolvers": "^4.2.1",
-    "prisma": "^5.19.0"
+    "prisma": "^5.19.1"
   },
   "dependencies": {
     "@apollo/server": "^4.11.0",
