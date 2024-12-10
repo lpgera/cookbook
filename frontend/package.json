@@ -5,7 +5,7 @@
   "devDependencies": {
     "@apollo/client": "^3.12.2",
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.13.5",
+    "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.1.0",
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/near-operation-file-preset": "^3.0.0",
