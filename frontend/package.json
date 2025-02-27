@@ -12,7 +12,7 @@
     "@graphql-codegen/typescript": "^4.1.4",
     "@graphql-codegen/typescript-operations": "^4.5.1",
     "@mui/icons-material": "^6.4.5",
-    "@mui/material": "^6.4.4",
+    "@mui/material": "^6.4.6",
     "@types/node": "^22.13.5",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
