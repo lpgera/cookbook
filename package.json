@@ -27,7 +27,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "npm-check-updates": "^17.1.15",
-    "prettier": "^3.5.2"
+    "prettier": "^3.5.3"
   },
   "lint-staged": {
     "*.{ts,js,css,md,json,yml}": "prettier --write"
