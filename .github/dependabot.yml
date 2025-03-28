@@ -4,6 +4,10 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    groups:
+      mui:
+        patterns:
+          - '@mui/*'
     open-pull-requests-limit: 20
   - package-ecosystem: 'docker'
     directory: '/'
