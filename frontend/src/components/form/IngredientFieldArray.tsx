@@ -39,7 +39,7 @@ const IngredientFieldArray = ({
           marginBottom={2}
           key={field.id}
         >
-          <Grid item>
+          <Grid>
             <TextField
               size="small"
               {...register(
@@ -49,7 +49,7 @@ const IngredientFieldArray = ({
               style={{ width: 100 }}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <ControlledAutocompleteField
               name={`ingredientGroups.${groupIndex}.ingredients.${index}.unit`}
               label="Unit"
@@ -58,7 +58,7 @@ const IngredientFieldArray = ({
               control={control}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <ControlledAutocompleteField
               name={`ingredientGroups.${groupIndex}.ingredients.${index}.name`}
               label="Ingredient name"
@@ -72,9 +72,9 @@ const IngredientFieldArray = ({
               control={control}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <Grid container>
-              <Grid item>
+              <Grid>
                 <IconButton
                   aria-label="swap up"
                   color="secondary"
@@ -84,7 +84,7 @@ const IngredientFieldArray = ({
                   <ArrowUpward />
                 </IconButton>
               </Grid>
-              <Grid item>
+              <Grid>
                 <IconButton
                   aria-label="swap down"
                   color="secondary"
@@ -94,7 +94,7 @@ const IngredientFieldArray = ({
                   <ArrowDownward />
                 </IconButton>
               </Grid>
-              <Grid item>
+              <Grid>
                 <IconButton
                   aria-label="delete"
                   color="error"

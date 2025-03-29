@@ -13,11 +13,11 @@ const Categories = () => {
 
   return (
     <Grid container spacing={1} marginBottom={4}>
-      <Grid item key={'all'}>
+      <Grid key={'all'}>
         <CategoryChip category={'All recipes'} href={'/'} />
       </Grid>
       {categories.map((category) => (
-        <Grid item key={category}>
+        <Grid key={category}>
           <CategoryChip category={category} />
         </Grid>
       ))}

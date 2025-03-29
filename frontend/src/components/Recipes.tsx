@@ -72,7 +72,7 @@ function Recipes() {
       <Categories />
       <Grid container spacing={4}>
         {recipes.map((r, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3}} key={index}>
             <Card>
               <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
                 <div

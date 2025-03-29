@@ -48,7 +48,7 @@ const Login = () => {
           }}
         >
           <Grid container spacing={1}>
-            <Grid item>
+            <Grid>
               <TextField
                 size={'small'}
                 type={'password'}
@@ -57,7 +57,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.currentTarget.value)}
               />
             </Grid>
-            <Grid item style={{ display: 'flex', alignItems: 'stretch' }}>
+            <Grid style={{ display: 'flex', alignItems: 'stretch' }}>
               <Button
                 variant={'contained'}
                 aria-label={'login'}
