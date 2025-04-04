@@ -22,7 +22,7 @@ app.use(
   })
 )
 
-app.get('*', (_, res) => {
+app.get('/', (_, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
 })
 
