@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
-import express from 'express'
+import type { Request } from 'express'
 
-const context = async ({ req }: { req: express.Request }) => {
+const context = async ({ req }: { req: Request }) => {
   const xToken = req.headers['x-token']
   const token = Array.isArray(xToken) ? xToken[0] : xToken
 
