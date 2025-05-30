@@ -20,7 +20,7 @@
     "@types/compression": "^1.8.0",
     "@types/cors": "^2.8.18",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.24",
+    "@types/node": "^22.15.27",
     "body-parser": "^2.2.0",
     "compression": "^1.8.0",
     "cors": "^2.8.5",
