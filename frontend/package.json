@@ -6,7 +6,7 @@
     "@apollo/client": "^3.13.8",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@fontsource/roboto": "^5.2.5",
+    "@fontsource/roboto": "^5.2.6",
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/near-operation-file-preset": "^3.0.1",
     "@graphql-codegen/typescript": "^4.1.4",
