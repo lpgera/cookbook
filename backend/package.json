@@ -22,7 +22,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.14",
     "body-parser": "^2.2.0",
-    "compression": "^1.8.0",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "graphql": "^16.11.0",
