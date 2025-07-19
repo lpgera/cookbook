@@ -1,5 +1,5 @@
-import { Recipe, IngredientGroup, Ingredient } from '@prisma/client'
+import type { Recipe, IngredientGroup, Ingredient } from '@prisma/client'
 
-export { Recipe as PrismaRecipe }
-export { IngredientGroup as PrismaIngredientGroup }
-export { Ingredient as PrismaIngredient }
+export type { Recipe as PrismaRecipe }
+export type { IngredientGroup as PrismaIngredientGroup }
+export type { Ingredient as PrismaIngredient }

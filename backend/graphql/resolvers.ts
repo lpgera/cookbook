@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { GraphQLScalarType, Kind } from 'graphql'
 import jwt from 'jsonwebtoken'
-import { Resolvers } from './resolvers.gen'
+import type { Resolvers } from './resolvers.gen.ts'
 
 const prisma = new PrismaClient()
 

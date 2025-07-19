@@ -2,13 +2,13 @@ import path from 'path'
 import http from 'http'
 import express from 'express'
 import cors from 'cors'
-import { json } from 'body-parser'
+import bodyParser from 'body-parser'
 import compression from 'compression'
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@as-integrations/express5'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
-import schema from './graphql/schema'
-import context, { Context } from './graphql/context'
+import schema from './graphql/schema.ts'
+import context, { type Context } from './graphql/context.ts'
 
 const app = express()
 const httpServer = http.createServer(app)
@@ -17,13 +17,13 @@ const port = process.env.PORT ?? 4000
 app.use(compression())
 
 app.use(
-  express.static(path.join(__dirname, 'frontend'), {
+  express.static(path.join(import.meta.dirname, 'frontend'), {
     maxAge: '30 days',
   })
 )
 
 app.get('/', (_, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
+  res.sendFile(path.join(import.meta.dirname, 'frontend', 'index.html'))
 })
 
 const apolloServer = new ApolloServer<Context>({
@@ -37,7 +37,7 @@ apolloServer
     app.use(
       '/graphql',
       cors<cors.CorsRequest>(),
-      json(),
+      bodyParser.json(),
       expressMiddleware(apolloServer, {
         context,
       })

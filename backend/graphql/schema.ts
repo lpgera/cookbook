@@ -1,7 +1,7 @@
-import gql from 'graphql-tag'
+import { gql } from 'graphql-tag'
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { schemaTransformer } from './loggedInDirective'
-import resolvers from './resolvers'
+import { schemaTransformer } from './loggedInDirective.ts'
+import resolvers from './resolvers.ts'
 
 const typeDefs = gql`
   directive @loggedIn on FIELD_DEFINITION | MUTATION

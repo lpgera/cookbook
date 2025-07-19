@@ -1,14 +1,14 @@
-import {
+import type {
   GraphQLResolveInfo,
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql'
-import {
+import type {
   PrismaRecipe,
   PrismaIngredientGroup,
   PrismaIngredient,
-} from './typeMappings'
-import { Context } from './context'
+} from './typeMappings.ts'
+import type { Context } from './context.ts'
 export type Maybe<T> =
   T extends PromiseLike<infer U> ? Promise<U | null> : T | null
 export type InputMaybe<T> =
