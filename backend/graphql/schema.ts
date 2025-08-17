@@ -47,6 +47,7 @@ const typeDefs = gql`
     categories: [String!]! @loggedIn
     ingredients: [String!]! @loggedIn
     units: [String!]! @loggedIn
+    search(query: String!): [Recipe!]! @loggedIn
   }
 
   input IngredientInput {

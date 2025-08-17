@@ -126,6 +126,35 @@ const resolvers: Resolvers = {
       })
       return ingredients.map((i) => i.unit).filter(Boolean)
     },
+    search: async (_, { query }) => {
+      return prisma.recipe.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              ingredientGroups: {
+                some: {
+                  ingredients: {
+                    some: {
+                      name: {
+                        contains: query,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+        orderBy: { name: 'asc' },
+      })
+    },
   },
   Mutation: {
     login: (_, { password }) => {
