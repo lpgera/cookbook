@@ -11,6 +11,7 @@ import Login from './components/Login'
 import useApolloClient from './hooks/useApolloClient'
 import useAuth from './hooks/useAuth'
 import ShoppingList from './components/ShoppingList'
+import Search from './components/Search'
 
 function App() {
   const [token] = useAuth()
@@ -29,6 +30,7 @@ function App() {
               <Route path=":id" element={<Recipe />} />
               <Route path=":id/edit" element={<RecipeEdit />} />
               <Route path="shopping-list" element={<ShoppingList />} />
+              <Route path="search" element={<Search />} />
             </Routes>
           </Container>
         ) : (

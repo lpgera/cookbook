@@ -96,6 +96,7 @@ export type Query = {
   ingredients: Array<Scalars['String']['output']>
   recipe: Recipe
   recipes: Array<Recipe>
+  search: Array<Recipe>
   units: Array<Scalars['String']['output']>
 }
 
@@ -106,6 +107,10 @@ export type QueryRecipeArgs = {
 export type QueryRecipesArgs = {
   category?: InputMaybe<Scalars['String']['input']>
   ids?: InputMaybe<Array<Scalars['Int']['input']>>
+}
+
+export type QuerySearchArgs = {
+  query: Scalars['String']['input']
 }
 
 export type Recipe = {

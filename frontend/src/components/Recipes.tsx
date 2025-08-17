@@ -5,22 +5,13 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
-import {
-  Box,
-  Card,
-  CardContent,
-  Fab,
-  Grid,
-  Typography,
-  Checkbox,
-  Link,
-} from '@mui/material'
-import { Add, ShoppingCart } from '@mui/icons-material'
+import { Fab, Grid } from '@mui/material'
+import { Add, Search, ShoppingCart } from '@mui/icons-material'
 import { RecipesQuery, RecipesQueryVariables } from './Recipes.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
 import Categories from './Categories'
-import CategoryChip from './CategoryChip'
+import RecipeListCard from './RecipeListCard'
 
 function Recipes() {
   const { category } = useParams()
@@ -34,6 +25,8 @@ function Recipes() {
       } else {
         setSearchParams({
           recipes: recipes.join(','),
+        }, {
+          replace: true,
         })
       }
     },
@@ -72,63 +65,25 @@ function Recipes() {
       <Categories />
       <Grid container spacing={4}>
         {recipes.map((r, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3}} key={index}>
-            <Card>
-              <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    style={{ overflow: 'ellipsis', flexGrow: 1 }}
-                    noWrap
-                  >
-                    <Link href={`/${r.id}`}>{r.name}</Link>
-                  </Typography>
-                  <Checkbox
-                    size="small"
-                    checked={selectedRecipes.includes(r.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedRecipes([...selectedRecipes, r.id])
-                      } else {
-                        setSelectedRecipes(
-                          selectedRecipes.filter((id) => id !== r.id)
-                        )
-                      }
-                    }}
-                  />
-                </div>
-                <Typography
-                  style={{ overflow: 'ellipsis', height: 24 }}
-                  noWrap
-                  variant="body2"
-                >
-                  {r.description}
-                </Typography>
-                {r.categories.length ? (
-                  <Box>
-                    {r.categories.map((c) => (
-                      <React.Fragment key={c}>
-                        <CategoryChip category={c} />{' '}
-                      </React.Fragment>
-                    ))}
-                  </Box>
-                ) : null}
-              </CardContent>
-            </Card>
-          </Grid>
+          <RecipeListCard
+            recipe={r}
+            isChecked={selectedRecipes.includes(r.id)}
+            onCheckedChange={(e) => {
+              if (e.target.checked) {
+                setSelectedRecipes([...selectedRecipes, r.id])
+              } else {
+                setSelectedRecipes(selectedRecipes.filter((id) => id !== r.id))
+              }
+            }}
+            key={index}
+          />
         ))}
       </Grid>
       {selectedRecipes.length > 0 ? (
         <Fab
           style={{
             position: 'fixed',
-            bottom: 96,
+            bottom: 168,
             right: 24,
           }}
           color="secondary"
@@ -145,7 +100,7 @@ function Recipes() {
       <Fab
         style={{
           position: 'fixed',
-          bottom: 24,
+          bottom: 96,
           right: 24,
         }}
         color="secondary"
@@ -153,6 +108,18 @@ function Recipes() {
         aria-label="add"
       >
         <Add />
+      </Fab>
+      <Fab
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+        }}
+        color="secondary"
+        href={'/search'}
+        aria-label="searhc"
+      >
+        <Search />
       </Fab>
     </>
   )
