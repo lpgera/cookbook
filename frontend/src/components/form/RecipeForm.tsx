@@ -1,6 +1,7 @@
 import React from 'react'
 import { Control, FormState, UseFormRegister } from 'react-hook-form'
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { Fab, TextField, Typography } from '@mui/material'
 import { Save } from '@mui/icons-material'
 import IngredientGroupFieldArray from './IngredientGroupFieldArray'

@@ -1,5 +1,11 @@
-import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client'
-import { onError } from '@apollo/client/link/error'
+import {
+  ApolloClient,
+  ApolloLink,
+  CombinedGraphQLErrors,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client'
+import { ErrorLink } from '@apollo/client/link/error'
 import useAuth from './useAuth'
 
 export default function useApolloClient() {
@@ -18,10 +24,11 @@ export default function useApolloClient() {
         fetchPolicy: 'network-only',
       },
     },
-    link: from([
-      onError(({ graphQLErrors, networkError }) => {
+    link: ApolloLink.from([
+      new ErrorLink(({ error }) => {
         if (
-          graphQLErrors?.some((err) =>
+          CombinedGraphQLErrors.is(error) &&
+          error.errors?.some((err) =>
             err.message.includes(
               'You must be logged in to access this resource.'
             )
@@ -29,16 +36,7 @@ export default function useApolloClient() {
         ) {
           setToken('')
         }
-        if (graphQLErrors) {
-          graphQLErrors.forEach(({ message, locations, path }) =>
-            console.log(
-              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-            )
-          )
-        }
-        if (networkError) {
-          console.log(`[Network error]: ${networkError}`)
-        }
+        console.error(error)
       }),
       new HttpLink({
         uri: '/graphql',

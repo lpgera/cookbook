@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { useForm } from 'react-hook-form'
 import { Card, CardContent, Typography } from '@mui/material'
 import RecipeForm from './form/RecipeForm'
