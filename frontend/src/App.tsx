@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route, HashRouter as Router, Routes } from 'react-router-dom'
-import { ApolloProvider } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client/react'
 import Container from '@mui/material/Container'
 import Recipes from './components/Recipes'
 import Recipe from './components/Recipe'

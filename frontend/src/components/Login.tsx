@@ -8,7 +8,8 @@ import {
   Typography,
 } from '@mui/material'
 import LockOpen from '@mui/icons-material/LockOpen'
-import { gql, useMutation } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { LoginMutation, LoginMutationVariables } from './Login.types.gen'
 import useAuth from '../hooks/useAuth'
 

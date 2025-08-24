@@ -1,5 +1,6 @@
 import { Card, CardContent, Typography, Grid, TextField } from '@mui/material'
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import React, { useState } from 'react'
 import Loading from './utils/Loading'
 import { SearchQuery, SearchQueryVariables } from './Search.types.gen'

@@ -4,7 +4,8 @@ import {
   Link as RouterLink,
   useSearchParams,
 } from 'react-router-dom'
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { Fab, Grid } from '@mui/material'
 import { Add, Search, ShoppingCart } from '@mui/icons-material'
 import { RecipesQuery, RecipesQueryVariables } from './Recipes.types.gen'

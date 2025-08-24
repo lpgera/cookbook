@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import ReactMarkdown from 'react-markdown'
 import { Card, CardContent, Divider, Box, Typography, Fab } from '@mui/material'
 import { Edit, Delete } from '@mui/icons-material'
