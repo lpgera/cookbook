@@ -22,6 +22,8 @@ RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 COPY . .
 
+ENV DEBUG=*
+
 RUN npx -w backend prisma generate
 
 FROM node:25.0.0-slim AS target
