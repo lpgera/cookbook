@@ -4,15 +4,19 @@ import type {
   GraphQLScalarTypeConfig,
 } from 'graphql'
 import type {
-  PrismaRecipe,
-  PrismaIngredientGroup,
-  PrismaIngredient,
+  DbRecipe,
+  DbIngredientGroup,
+  DbIngredient,
 } from './typeMappings.ts'
 import type { Context } from './context.ts'
 export type Maybe<T> =
-  T extends PromiseLike<infer U> ? Promise<U | null> : T | null
+  T extends PromiseLike<infer U>
+    ? Promise<U | null | undefined | void>
+    : T | null | undefined | void
 export type InputMaybe<T> =
-  T extends PromiseLike<infer U> ? Promise<U | null> : T | null
+  T extends PromiseLike<infer U>
+    ? Promise<U | null | undefined | void>
+    : T | null | undefined | void
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
 }
@@ -84,7 +88,7 @@ export type IngredientInput = {
 export type Mutation = {
   __typename?: 'Mutation'
   addRecipe: Recipe
-  deleteRecipe: Recipe
+  deleteRecipe?: Maybe<Recipe>
   login: Scalars['String']['output']
   updateRecipe: Recipe
 }
@@ -157,7 +161,12 @@ export type ResolverTypeWrapper<T> = Promise<T> | T
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>
 }
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+export type Resolver<
+  TResult,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | ResolverWithResolve<TResult, TParent, TContext, TArgs>
 
@@ -221,22 +230,29 @@ export type SubscriptionObject<
 export type SubscriptionResolver<
   TResult,
   TKey extends string,
-  TParent = {},
-  TContext = {},
-  TArgs = {},
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
 > =
   | ((
       ...args: any[]
     ) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>
 
-export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+export type TypeResolveFn<
+  TTypes,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+> = (
   parent: TParent,
   context: TContext,
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
+export type IsTypeOfResolverFn<
+  T = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+> = (
   obj: T,
   context: TContext,
   info: GraphQLResolveInfo
@@ -245,10 +261,10 @@ export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
 export type NextResolverFn<T> = () => Promise<T>
 
 export type DirectiveResolverFn<
-  TResult = {},
-  TParent = {},
-  TContext = {},
-  TArgs = {},
+  TResult = Record<PropertyKey, never>,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
 > = (
   next: NextResolverFn<TResult>,
   parent: TParent,
@@ -261,14 +277,14 @@ export type DirectiveResolverFn<
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>
   Date: ResolverTypeWrapper<Scalars['Date']['output']>
-  Ingredient: ResolverTypeWrapper<PrismaIngredient>
-  IngredientGroup: ResolverTypeWrapper<PrismaIngredientGroup>
+  Ingredient: ResolverTypeWrapper<DbIngredient>
+  IngredientGroup: ResolverTypeWrapper<DbIngredientGroup>
   IngredientGroupInput: IngredientGroupInput
   IngredientInput: IngredientInput
   Int: ResolverTypeWrapper<Scalars['Int']['output']>
-  Mutation: ResolverTypeWrapper<{}>
-  Query: ResolverTypeWrapper<{}>
-  Recipe: ResolverTypeWrapper<PrismaRecipe>
+  Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>
+  Query: ResolverTypeWrapper<Record<PropertyKey, never>>
+  Recipe: ResolverTypeWrapper<DbRecipe>
   RecipeInput: RecipeInput
   String: ResolverTypeWrapper<Scalars['String']['output']>
 }>
@@ -277,14 +293,14 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output']
   Date: Scalars['Date']['output']
-  Ingredient: PrismaIngredient
-  IngredientGroup: PrismaIngredientGroup
+  Ingredient: DbIngredient
+  IngredientGroup: DbIngredientGroup
   IngredientGroupInput: IngredientGroupInput
   IngredientInput: IngredientInput
   Int: Scalars['Int']['output']
-  Mutation: {}
-  Query: {}
-  Recipe: PrismaRecipe
+  Mutation: Record<PropertyKey, never>
+  Query: Record<PropertyKey, never>
+  Recipe: DbRecipe
   RecipeInput: RecipeInput
   String: Scalars['String']['output']
 }>
@@ -317,7 +333,6 @@ export type IngredientResolvers<
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   unit?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }>
 
 export type IngredientGroupResolvers<
@@ -336,7 +351,6 @@ export type IngredientGroupResolvers<
   recipe?: Resolver<ResolversTypes['Recipe'], ParentType, ContextType>
   recipeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }>
 
 export type MutationResolvers<
@@ -351,7 +365,7 @@ export type MutationResolvers<
     RequireFields<MutationAddRecipeArgs, 'recipe'>
   >
   deleteRecipe?: Resolver<
-    ResolversTypes['Recipe'],
+    Maybe<ResolversTypes['Recipe']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteRecipeArgs, 'id'>
@@ -427,7 +441,6 @@ export type RecipeResolvers<
   instructions?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }>
 
 export type Resolvers<ContextType = Context> = ResolversObject<{

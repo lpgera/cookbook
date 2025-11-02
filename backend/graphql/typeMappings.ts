@@ -1,5 +1,10 @@
-import type { Recipe, IngredientGroup, Ingredient } from '@prisma/client'
+import type { Selectable } from 'kysely'
+import type {
+  Recipe,
+  IngredientGroup,
+  Ingredient,
+} from '../kysely/db.types.gen.ts'
 
-export type { Recipe as PrismaRecipe }
-export type { IngredientGroup as PrismaIngredientGroup }
-export type { Ingredient as PrismaIngredient }
+export type DbRecipe = Selectable<Recipe>
+export type DbIngredientGroup = Selectable<IngredientGroup>
+export type DbIngredient = Selectable<Ingredient>

@@ -1,9 +1,106 @@
-import { PrismaClient } from '@prisma/client'
 import { GraphQLScalarType, Kind } from 'graphql'
 import jwt from 'jsonwebtoken'
-import type { Resolvers } from './resolvers.gen.ts'
+import db from '../kysely/db.ts'
+import type { IngredientGroupInput, Resolvers } from './resolvers.gen.ts'
 
-const prisma = new PrismaClient()
+async function insertIngredientsAndGroups({
+  recipeId,
+  ingredientGroups,
+  date,
+  trx,
+}: {
+  recipeId: number
+  ingredientGroups: IngredientGroupInput[]
+  date: Date
+  trx: typeof db
+}) {
+  for (const group of ingredientGroups) {
+    const insertedGroup = await trx
+      .insertInto('IngredientGroup')
+      .values({
+        name: group.name,
+        recipeId,
+        updatedAt: date,
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow()
+
+    await trx
+      .insertInto('Ingredient')
+      .values(
+        group.ingredients.map((ingredient, index) => ({
+          name: ingredient.name,
+          amount: ingredient.amount,
+          unit: ingredient.unit,
+          order: index,
+          groupId: insertedGroup.id,
+          updatedAt: date,
+        }))
+      )
+      .execute()
+  }
+}
+
+const deleteOrphanCategories = ({ trx }: { trx: typeof db }) =>
+  trx
+    .deleteFrom('Category')
+    .where(({ not, exists, selectFrom }) =>
+      not(
+        exists(
+          selectFrom('_CategoryToRecipe')
+            .selectAll()
+            .whereRef('_CategoryToRecipe.A', '=', 'Category.id')
+        )
+      )
+    )
+    .execute()
+
+async function upsertRecipeCategories({
+  recipeId,
+  categories,
+  trx,
+  date,
+}: {
+  recipeId: number
+  categories: string[]
+  trx: typeof db
+  date: Date
+}) {
+  for (const categoryName of categories) {
+    const existingCategory = await trx
+      .selectFrom('Category')
+      .selectAll()
+      .where('name', '=', categoryName)
+      .executeTakeFirst()
+
+    if (existingCategory) {
+      await trx
+        .insertInto('_CategoryToRecipe')
+        .values({
+          A: existingCategory.id,
+          B: recipeId,
+        })
+        .execute()
+    } else {
+      const newCategory = await trx
+        .insertInto('Category')
+        .values({
+          name: categoryName,
+          updatedAt: date,
+        })
+        .returningAll()
+        .executeTakeFirstOrThrow()
+
+      await trx
+        .insertInto('_CategoryToRecipe')
+        .values({
+          A: newCategory.id,
+          B: recipeId,
+        })
+        .execute()
+    }
+  }
+}
 
 const resolvers: Resolvers = {
   Date: new GraphQLScalarType<Date, string>({
@@ -24,136 +121,116 @@ const resolvers: Resolvers = {
   }),
   Ingredient: {
     group: ({ groupId: id }) => {
-      return prisma.ingredientGroup.findUniqueOrThrow({
-        where: {
-          id,
-        },
-      })
+      return db
+        .selectFrom('IngredientGroup')
+        .selectAll()
+        .where('id', '=', id)
+        .executeTakeFirstOrThrow()
     },
   },
   IngredientGroup: {
-    recipe: ({ recipeId: id }) => {
-      return prisma.recipe.findUniqueOrThrow({
-        where: {
-          id,
-        },
-      })
-    },
-    ingredients: async ({ id: groupId }) => {
-      return (
-        (await prisma.ingredientGroup
-          .findUnique({
-            where: {
-              id: groupId,
-            },
-          })
-          .ingredients()) || []
-      )
-    },
+    recipe: ({ recipeId: id }) =>
+      db
+        .selectFrom('Recipe')
+        .selectAll()
+        .where('id', '=', id)
+        .executeTakeFirstOrThrow(),
+    ingredients: async ({ id: groupId }) =>
+      db
+        .selectFrom('Ingredient')
+        .selectAll()
+        .where('groupId', '=', groupId)
+        .execute(),
   },
   Recipe: {
-    ingredientGroups: async ({ id: recipeId }) => {
-      return (
-        (await prisma.recipe
-          .findUnique({ where: { id: recipeId } })
-          .ingredientGroups()) || []
-      )
-    },
+    ingredientGroups: async ({ id: recipeId }) =>
+      db
+        .selectFrom('IngredientGroup')
+        .selectAll()
+        .where('recipeId', '=', recipeId)
+        .execute(),
     categories: async ({ id: recipeId }) => {
-      const categories =
-        (await prisma.recipe
-          .findUnique({ where: { id: recipeId } })
-          .categories({
-            select: {
-              name: true,
-            },
-          })) || []
+      const categories = await db
+        .selectFrom('Category')
+        .innerJoin('_CategoryToRecipe', '_CategoryToRecipe.A', 'Category.id')
+        .select('Category.name')
+        .where('_CategoryToRecipe.B', '=', recipeId)
+        .execute()
       return categories.map((c) => c.name)
     },
   },
   Query: {
     recipes: (_, { ids, category }) => {
-      return prisma.recipe.findMany({
-        where: {
-          ...(category
-            ? {
-                categories: {
-                  some: {
-                    name: category,
-                  },
-                },
-              }
-            : undefined),
-          ...(ids?.length ? { id: { in: ids } } : undefined),
-        },
-        orderBy: {
-          name: 'asc',
-        },
-      })
+      const baseQuery = db
+        .selectFrom('Recipe')
+        .selectAll('Recipe')
+        .orderBy('name', 'asc')
+
+      const queryFilteredByIds = ids?.length
+        ? baseQuery.where('id', 'in', ids)
+        : baseQuery
+
+      const queryFilteredByCategory = category
+        ? queryFilteredByIds
+            .innerJoin('_CategoryToRecipe', '_CategoryToRecipe.B', 'Recipe.id')
+            .innerJoin('Category', 'Category.id', '_CategoryToRecipe.A')
+            .where('Category.name', '=', category)
+        : queryFilteredByIds
+
+      return queryFilteredByCategory.distinct().execute()
     },
-    recipe: (_, { id }) => {
-      return prisma.recipe.findUniqueOrThrow({
-        where: {
-          id,
-        },
-      })
-    },
+    recipe: (_, { id }) =>
+      db
+        .selectFrom('Recipe')
+        .selectAll()
+        .where('id', '=', id)
+        .executeTakeFirstOrThrow(),
     categories: async () => {
-      const categories = await prisma.category.findMany()
+      const categories = await db
+        .selectFrom('Category')
+        .select('name')
+        .orderBy('name', 'asc')
+        .execute()
       return categories.map((c) => c.name)
     },
     ingredients: async () => {
-      const ingredients = await prisma.ingredient.findMany({
-        select: {
-          name: true,
-        },
-        distinct: ['name'],
-        orderBy: {
-          name: 'asc',
-        },
-      })
+      const ingredients = await db
+        .selectFrom('Ingredient')
+        .select('name')
+        .distinct()
+        .orderBy('name', 'asc')
+        .execute()
       return ingredients.map((i) => i.name)
     },
     units: async () => {
-      const ingredients = await prisma.ingredient.findMany({
-        select: {
-          unit: true,
-        },
-        distinct: ['unit'],
-        orderBy: {
-          unit: 'asc',
-        },
-      })
+      const ingredients = await db
+        .selectFrom('Ingredient')
+        .select('unit')
+        .distinct()
+        .orderBy('unit', 'asc')
+        .execute()
       return ingredients.map((i) => i.unit).filter(Boolean)
     },
     search: async (_, { query }) => {
-      return prisma.recipe.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-            {
-              ingredientGroups: {
-                some: {
-                  ingredients: {
-                    some: {
-                      name: {
-                        contains: query,
-                        mode: 'insensitive',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        orderBy: { name: 'asc' },
-      })
+      return db
+        .selectFrom('Recipe')
+        .selectAll('Recipe')
+        .innerJoin('IngredientGroup', 'IngredientGroup.recipeId', 'Recipe.id')
+        .innerJoin('Ingredient', 'Ingredient.groupId', 'IngredientGroup.id')
+        .where((eb) =>
+          eb(
+            eb.fn<string>(`LOWER`, ['Recipe.name']),
+            'like',
+            `%${query.toLowerCase()}%`
+          ).or(
+            eb.fn<string>(`LOWER`, ['Ingredient.name']),
+            'like',
+            `%${query.toLowerCase()}%`
+          )
+        )
+        .distinct()
+        .orderBy('Recipe.name', 'asc')
+        .execute()
     },
   },
   Mutation: {
@@ -172,103 +249,85 @@ const resolvers: Resolvers = {
       throw new Error('Invalid password')
     },
     addRecipe: (_, { recipe }) =>
-      prisma.recipe.create({
-        data: {
-          name: recipe.name,
-          description: recipe.description,
-          instructions: recipe.instructions,
-          ingredientGroups: {
-            create: recipe.ingredientGroups.map((group) => ({
-              ...group,
-              ingredients: {
-                create: group.ingredients.map((ingredient, index) => ({
-                  ...ingredient,
-                  order: index,
-                })),
-              },
-            })),
-          },
-          categories: {
-            connectOrCreate: recipe.categories.map((name) => ({
-              where: { name },
-              create: { name },
-            })),
-          },
-        },
-      }),
-    updateRecipe: async (_, { id: recipeId, recipe }) => {
-      await prisma.$transaction([
-        prisma.ingredientGroup.deleteMany({
-          where: {
-            recipeId,
-          },
-        }),
-        prisma.recipe.update({
-          where: {
-            id: recipeId,
-          },
-          data: {
-            categories: {
-              set: [],
-            },
-          },
-        }),
-        prisma.recipe.update({
-          where: {
-            id: recipeId,
-          },
-          data: {
+      db.transaction().execute(async (trx) => {
+        const date = new Date()
+        const insertedRecipe = await trx
+          .insertInto('Recipe')
+          .values({
             name: recipe.name,
             description: recipe.description,
             instructions: recipe.instructions,
-            ingredientGroups: {
-              create: recipe.ingredientGroups.map((group) => ({
-                ...group,
-                ingredients: {
-                  create: group.ingredients.map((ingredient, index) => ({
-                    ...ingredient,
-                    order: index,
-                  })),
-                },
-              })),
-            },
-            categories: {
-              connectOrCreate: recipe.categories.map((name) => ({
-                where: { name },
-                create: { name },
-              })),
-            },
-          },
-        }),
-        prisma.$executeRaw`
-          delete from "Category" where not exists(
-              select * from "_CategoryToRecipe" 
-              where "_CategoryToRecipe"."A" = "Category"."id"
-          )
-        `,
-      ])
+            updatedAt: date,
+          })
+          .returningAll()
+          .executeTakeFirstOrThrow()
 
-      return prisma.recipe.findUniqueOrThrow({
-        where: {
-          id: recipeId,
-        },
-      })
-    },
+        await insertIngredientsAndGroups({
+          recipeId: insertedRecipe.id,
+          ingredientGroups: recipe.ingredientGroups,
+          date,
+          trx,
+        })
+
+        await upsertRecipeCategories({
+          recipeId: insertedRecipe.id,
+          categories: recipe.categories,
+          date,
+          trx,
+        })
+
+        return insertedRecipe
+      }),
+    updateRecipe: async (_, { id: recipeId, recipe }) =>
+      db.transaction().execute(async (trx) => {
+        const date = new Date()
+
+        await trx
+          .deleteFrom('IngredientGroup')
+          .where('recipeId', '=', recipeId)
+          .execute()
+
+        await trx
+          .deleteFrom('_CategoryToRecipe')
+          .where('B', '=', recipeId)
+          .execute()
+
+        const updatedRecipe = await trx
+          .updateTable('Recipe')
+          .where('id', '=', recipeId)
+          .set({
+            name: recipe.name,
+            description: recipe.description,
+            instructions: recipe.instructions,
+            updatedAt: date,
+          })
+          .returningAll()
+          .executeTakeFirstOrThrow()
+
+        await insertIngredientsAndGroups({
+          recipeId,
+          ingredientGroups: recipe.ingredientGroups,
+          date,
+          trx,
+        })
+
+        await upsertRecipeCategories({
+          recipeId,
+          categories: recipe.categories,
+          date,
+          trx,
+        })
+
+        await deleteOrphanCategories({ trx })
+
+        return updatedRecipe
+      }),
     deleteRecipe: async (_, { id }) => {
-      const recipe = await prisma.recipe.delete({
-        where: {
-          id,
-        },
+      await db.transaction().execute(async (trx) => {
+        await trx.deleteFrom('Recipe').where('id', '=', id).execute()
+
+        await deleteOrphanCategories({ trx })
       })
-
-      await prisma.$executeRaw`
-        delete from "Category" where not exists(
-            select * from "_CategoryToRecipe" 
-            where "_CategoryToRecipe"."A" = "Category"."id"
-        )
-      `
-
-      return recipe
     },
   },
 }

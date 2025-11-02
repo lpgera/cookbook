@@ -6,7 +6,7 @@ export type DeleteRecipeMutationVariables = Types.Exact<{
 
 export type DeleteRecipeMutation = {
   __typename?: 'Mutation'
-  deleteRecipe: { __typename?: 'Recipe'; id: number }
+  deleteRecipe?: { __typename?: 'Recipe'; id: number } | null
 }
 
 export type RecipeQueryVariables = Types.Exact<{

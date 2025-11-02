@@ -68,7 +68,7 @@ export type IngredientInput = {
 export type Mutation = {
   __typename?: 'Mutation'
   addRecipe: Recipe
-  deleteRecipe: Recipe
+  deleteRecipe?: Maybe<Recipe>
   login: Scalars['String']['output']
   updateRecipe: Recipe
 }

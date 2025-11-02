@@ -75,7 +75,7 @@ const typeDefs = gql`
     login(password: String!): String!
     addRecipe(recipe: RecipeInput!): Recipe! @loggedIn
     updateRecipe(id: Int!, recipe: RecipeInput!): Recipe! @loggedIn
-    deleteRecipe(id: Int!): Recipe! @loggedIn
+    deleteRecipe(id: Int!): Recipe @loggedIn
   }
 `
 
