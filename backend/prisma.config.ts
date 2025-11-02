@@ -1,7 +1,0 @@
-import type { PrismaConfig } from 'prisma'
-
-export default {
-  migrations: {
-    seed: 'node prisma/seed.ts',
-  },
-} satisfies PrismaConfig

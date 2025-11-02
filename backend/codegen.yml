@@ -9,11 +9,11 @@ generates:
       useIndexSignature: true
       useTypeImports: true
       contextType: ./context.ts#Context
-      maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null> : T | null' # https://github.com/dotansimha/graphql-code-generator/issues/3174#issuecomment-595398571
+      maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null | undefined | void> : T | null | undefined | void' # https://github.com/dotansimha/graphql-code-generator/issues/3174#issuecomment-595398571
       mappers:
-        Recipe: ./typeMappings.ts#PrismaRecipe
-        IngredientGroup: ./typeMappings.ts#PrismaIngredientGroup
-        Ingredient: ./typeMappings.ts#PrismaIngredient
+        Recipe: ./typeMappings.ts#DbRecipe
+        IngredientGroup: ./typeMappings.ts#DbIngredientGroup
+        Ingredient: ./typeMappings.ts#DbIngredient
     plugins:
       - typescript
       - typescript-resolvers

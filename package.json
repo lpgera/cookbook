@@ -6,7 +6,7 @@
     "prepare": "husky || true",
     "check-updates": "ncu -i -w",
     "browserslist-update": "npx update-browserslist-db@latest",
-    "build": "npm run -w frontend build && npx -w backend prisma generate",
+    "build": "npm run -w frontend build",
     "start": "npm run -w backend start"
   },
   "author": "lpgera",

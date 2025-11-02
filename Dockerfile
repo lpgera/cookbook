@@ -22,10 +22,6 @@ RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 COPY . .
 
-ENV DEBUG=*
-
-RUN npx -w backend prisma generate
-
 FROM node:25.1.0-slim AS target
 
 RUN apt-get update && apt-get install -y openssl
