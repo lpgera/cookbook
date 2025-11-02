@@ -63,10 +63,6 @@ export interface Recipe {
   updatedAt: Timestamp
 }
 
-export interface Test {
-  id: Generated<number>
-}
-
 export interface DB {
   _CategoryToRecipe: _CategoryToRecipe
   _prisma_migrations: _PrismaMigrations
@@ -74,5 +70,4 @@ export interface DB {
   Ingredient: Ingredient
   IngredientGroup: IngredientGroup
   Recipe: Recipe
-  test: Test
 }
