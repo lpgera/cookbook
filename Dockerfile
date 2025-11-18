@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM node:25.2.0 AS frontend
+FROM --platform=$BUILDPLATFORM node:25.2.1 AS frontend
 
 WORKDIR /usr/src/app
 
@@ -11,7 +11,7 @@ COPY frontend frontend
 
 RUN npm run build -w frontend
 
-FROM node:25.2.0 AS dependencies
+FROM node:25.2.1 AS dependencies
 
 WORKDIR /usr/src/app
 
@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 COPY . .
 
-FROM node:25.2.0-slim AS target
+FROM node:25.2.1-slim AS target
 
 RUN apt-get update && apt-get install -y openssl
 
