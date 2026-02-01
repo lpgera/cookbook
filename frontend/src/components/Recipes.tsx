@@ -90,7 +90,7 @@ function Recipes() {
           color="secondary"
           component={RouterLink}
           to={{
-            pathname: 'shopping-list',
+            pathname: '/shopping-list',
             search: searchParams.toString(),
           }}
           aria-label="shopping list"
