@@ -34,7 +34,7 @@
     "kysely": "^0.28.10",
     "kysely-ctl": "^0.20.0",
     "pg": "^8.17.2",
-    "pg-connection-string": "^2.10.1"
+    "pg-connection-string": "^2.11.0"
   },
   "kysely-codegen": {
     "outFile": "kysely/db.types.gen.ts"
