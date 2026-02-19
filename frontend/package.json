@@ -9,7 +9,7 @@
     "@fontsource/roboto": "^5.2.9",
     "@graphql-codegen/cli": "^6.1.1",
     "@graphql-codegen/near-operation-file-preset": "^4.0.0",
-    "@graphql-codegen/typescript": "^5.0.7",
+    "@graphql-codegen/typescript": "^5.0.8",
     "@graphql-codegen/typescript-operations": "^5.0.7",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.5",
