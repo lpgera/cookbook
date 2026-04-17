@@ -26,12 +26,7 @@
     "typescript": "^6.0.3",
     "usehooks-ts": "^3.1.1",
     "vite": "^8.0.8",
-    "vite-plugin-pwa": "^1.2.0"
-  },
-  "overrides": {
-    "vite-plugin-pwa": {
-      "vite": "$vite"
-    }
+    "vite-plugin-pwa": "https://pkg.pr.new/vite-plugin-pwa@924"
   },
   "scripts": {
     "start": "vite",
