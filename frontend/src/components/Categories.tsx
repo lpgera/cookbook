@@ -13,7 +13,7 @@ const Categories = () => {
   `)
 
   return (
-    <Grid container spacing={1} marginBottom={4}>
+    <Grid container spacing={1} style={{ marginBottom: '32px' }}>
       <Grid key={'all'}>
         <CategoryChip category={'All recipes'} href={'/'} />
       </Grid>

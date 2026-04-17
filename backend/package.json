@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^6.3.0",
-    "@graphql-codegen/typescript": "^5.0.7",
+    "@graphql-codegen/typescript": "^5.0.10",
     "@graphql-codegen/typescript-resolvers": "^5.1.8",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
@@ -34,7 +34,7 @@
     "kysely": "^0.28.16",
     "kysely-ctl": "^0.20.0",
     "pg": "^8.20.0",
-    "pg-connection-string": "^2.10.1"
+    "pg-connection-string": "^2.12.0"
   },
   "kysely-codegen": {
     "outFile": "kysely/db.types.gen.ts"
