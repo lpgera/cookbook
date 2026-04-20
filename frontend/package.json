@@ -25,7 +25,7 @@
     "react-router-dom": "^7.14.1",
     "typescript": "^6.0.3",
     "usehooks-ts": "^3.1.1",
-    "vite": "^8.0.8",
+    "vite": "^8.0.9",
     "vite-plugin-pwa": "https://pkg.pr.new/vite-plugin-pwa@924"
   },
   "scripts": {
