@@ -8,6 +8,9 @@ updates:
       mui:
         patterns:
           - '@mui/*'
+      graphql-codegen:
+        patterns:
+          - '@graphql-codegen/*'
     open-pull-requests-limit: 20
   - package-ecosystem: 'docker'
     directory: '/'
