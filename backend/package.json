@@ -21,7 +21,7 @@
     "kysely-codegen": "^0.20.0"
   },
   "dependencies": {
-    "@apollo/server": "^5.5.0",
+    "@apollo/server": "^5.5.1",
     "@as-integrations/express5": "^1.1.2",
     "@graphql-tools/utils": "^11.1.0",
     "body-parser": "^2.2.2",
