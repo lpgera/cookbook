@@ -13,7 +13,7 @@
     "@graphql-codegen/typescript-operations": "^6.0.2",
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.0",
-    "@types/node": "^25.7.0",
+    "@types/node": "^25.8.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
