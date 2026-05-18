@@ -31,7 +31,7 @@
     "graphql": "^16.14.0",
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.3",
-    "kysely": "^0.29.0",
+    "kysely": "^0.29.2",
     "kysely-ctl": "^0.21.0",
     "pg": "^8.20.0",
     "pg-connection-string": "^2.12.0"
