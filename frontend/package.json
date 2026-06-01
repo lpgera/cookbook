@@ -20,7 +20,7 @@
     "graphql": "^16.14.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.7",
-    "react-hook-form": "^7.76.1",
+    "react-hook-form": "^7.77.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.16.0",
     "typescript": "^6.0.3",
