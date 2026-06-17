@@ -31,5 +31,9 @@
   },
   "lint-staged": {
     "*.{ts,js,css,md,json,yml}": "prettier --write"
+  },
+  "allowScripts": {
+    "@apollo/protobufjs@1.2.7": true,
+    "fsevents@2.3.3": true
   }
 }
