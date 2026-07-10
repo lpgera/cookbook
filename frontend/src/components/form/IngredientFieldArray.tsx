@@ -5,7 +5,7 @@ import {
   useFieldArray,
   UseFormRegister,
 } from 'react-hook-form'
-import { Button, Grid, IconButton, TextField } from '@mui/material'
+import { Button, Grid, IconButton, Stack, TextField } from '@mui/material'
 import { Add, ArrowDownward, ArrowUpward, Delete } from '@mui/icons-material'
 import ControlledAutocompleteField from './ControlledAutocompleteField'
 import FormData from './FormData.type'
@@ -30,13 +30,11 @@ const IngredientFieldArray = ({
     name: `ingredientGroups.${groupIndex}.ingredients`,
   })
   return (
-    <>
+    <Stack spacing={1}>
       {fields.map((field, index) => (
         <Grid
           container
           spacing={1}
-          marginTop={1}
-          marginBottom={2}
           key={field.id}
         >
           <Grid>
@@ -124,7 +122,7 @@ const IngredientFieldArray = ({
           Add ingredient
         </Button>
       </p>
-    </>
+    </Stack>
   )
 }
 

@@ -22,7 +22,7 @@ function App() {
       <Router>
         <AppBar />
         {token ? (
-          <Container>
+          <Container sx={{ pb: 12 }}>
             <Routes>
               <Route path="/" element={<Recipes />} />
               <Route path="category/:category" element={<Recipes />} />

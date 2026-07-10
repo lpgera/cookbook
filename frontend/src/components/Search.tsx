@@ -58,6 +58,7 @@ const Search = () => {
               size="small"
               margin="normal"
               label="Search criteria"
+              autoFocus
               fullWidth
               defaultValue={queryFromParams}
               onChange={(event) => debouncedOnQueryChange(event.target.value)}

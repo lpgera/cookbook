@@ -32,6 +32,7 @@ const RecipeForm = ({
     <form onSubmit={onSubmit}>
       <div>
         <TextField
+          autoFocus
           size="small"
           margin="normal"
           {...register('name', { required: true })}
