@@ -4,6 +4,8 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    cooldown:
+      default-days: 1
     groups:
       mui:
         patterns:
@@ -11,12 +13,15 @@ updates:
       graphql-codegen:
         patterns:
           - '@graphql-codegen/*'
-    open-pull-requests-limit: 20
   - package-ecosystem: 'docker'
     directory: '/'
     schedule:
       interval: 'daily'
+    cooldown:
+      default-days: 1
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'daily'
+    cooldown:
+      default-days: 1
