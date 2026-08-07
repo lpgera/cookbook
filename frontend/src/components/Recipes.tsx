@@ -3,7 +3,7 @@ import {
   useParams,
   Link as RouterLink,
   useSearchParams,
-} from 'react-router-dom'
+} from 'react-router'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { Fab, Grid } from '@mui/material'

@@ -1,5 +1,5 @@
 import { Card, CardContent, Divider, Typography, Link } from '@mui/material'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import React, { Fragment } from 'react'

@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { gql } from '@apollo/client'
 import { useMutation } from '@apollo/client/react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Card, CardContent, Typography } from '@mui/material'
 import RecipeForm from './form/RecipeForm'
 import {

@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import Loading from './utils/Loading'
 import { SearchQuery, SearchQueryVariables } from './Search.types.gen'
 import { useDebounceCallback } from 'usehooks-ts'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import RecipeListCard from './RecipeListCard'
 
 const Search = () => {
