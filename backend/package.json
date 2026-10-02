@@ -33,7 +33,7 @@
     "jsonwebtoken": "^9.0.3",
     "kysely": "^0.29.6",
     "kysely-ctl": "^0.21.0",
-    "pg": "^8.23.0",
+    "pg": "^8.23.1",
     "pg-connection-string": "^2.14.0"
   },
   "kysely-codegen": {
