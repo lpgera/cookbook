@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Autocomplete, Chip, TextField } from '@mui/material'
 import {
   Control,
@@ -25,6 +25,8 @@ const ControlledAutocompleteTagsField = <T extends FieldValues>({
   rules?: RegisterOptions<T>
   style?: React.CSSProperties
 }) => {
+  const [inputValue, setInputValue] = useState('')
+
   return (
     <Controller
       name={name}
@@ -41,7 +43,16 @@ const ControlledAutocompleteTagsField = <T extends FieldValues>({
           }}
           freeSolo
           value={value}
-          onBlur={onBlur}
+          inputValue={inputValue}
+          onInputChange={(_, v) => setInputValue(v)}
+          onBlur={() => {
+            const typedValue = inputValue.trim()
+            if (typedValue && !value.includes(typedValue)) {
+              onChange([...value, typedValue])
+            }
+            setInputValue('')
+            onBlur()
+          }}
           onChange={(_, v) => onChange(v)}
           renderValue={(value: readonly string[], getItemProps) =>
             value.map((option: string, index: number) => (

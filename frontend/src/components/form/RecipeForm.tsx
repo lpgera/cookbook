@@ -37,7 +37,10 @@ const RecipeForm = ({
           autoFocus
           size="small"
           margin="normal"
-          {...register('name', { required: true })}
+          {...register('name', {
+            required: true,
+            validate: (name) => !!name.trim(),
+          })}
           label="Name"
           error={!!formState.errors.name}
         />
@@ -101,6 +104,7 @@ const RecipeForm = ({
         color="secondary"
         aria-label="save"
         onClick={onSubmit}
+        disabled={formState.isSubmitting}
       >
         <Save />
       </Fab>

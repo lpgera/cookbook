@@ -1,4 +1,4 @@
-import { GraphQLScalarType, Kind } from 'graphql'
+import { GraphQLError, GraphQLScalarType, Kind } from 'graphql'
 import jwt from 'jsonwebtoken'
 import { sql } from 'kysely'
 import db from '../kysely/db.ts'
@@ -53,6 +53,16 @@ const deleteOrphanCategories = ({ trx }: { trx: typeof db }) =>
       )
     )
     .execute()
+
+function toRecipeName(name: string) {
+  const trimmedName = name.trim()
+  if (!trimmedName) {
+    throw new GraphQLError('Recipe name is required', {
+      extensions: { code: 'BAD_USER_INPUT' },
+    })
+  }
+  return trimmedName
+}
 
 const toContainsPattern = (query: string) =>
   `%${query.replace(/[\\%_]/g, '\\$&')}%`
@@ -259,7 +269,7 @@ const resolvers: Resolvers = {
         const insertedRecipe = await trx
           .insertInto('Recipe')
           .values({
-            name: recipe.name,
+            name: toRecipeName(recipe.name),
             description: recipe.description,
             instructions: recipe.instructions,
           })
@@ -296,7 +306,7 @@ const resolvers: Resolvers = {
           .updateTable('Recipe')
           .where('id', '=', recipeId)
           .set({
-            name: recipe.name,
+            name: toRecipeName(recipe.name),
             description: recipe.description,
             instructions: recipe.instructions,
             updatedAt: sql`CURRENT_TIMESTAMP`,
