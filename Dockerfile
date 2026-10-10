@@ -24,8 +24,6 @@ COPY . .
 
 FROM node:26.10.0-slim AS target
 
-RUN apt-get update && apt-get install -y openssl
-
 ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
