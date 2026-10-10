@@ -17,17 +17,6 @@ export interface _CategoryToRecipe {
   B: number
 }
 
-export interface _PrismaMigrations {
-  applied_steps_count: Generated<number>
-  checksum: string
-  finished_at: Timestamp | null
-  id: string
-  logs: string | null
-  migration_name: string
-  rolled_back_at: Timestamp | null
-  started_at: Generated<Timestamp>
-}
-
 export interface Category {
   createdAt: Generated<Timestamp>
   id: Generated<number>
@@ -65,7 +54,6 @@ export interface Recipe {
 
 export interface DB {
   _CategoryToRecipe: _CategoryToRecipe
-  _prisma_migrations: _PrismaMigrations
   Category: Category
   Ingredient: Ingredient
   IngredientGroup: IngredientGroup
