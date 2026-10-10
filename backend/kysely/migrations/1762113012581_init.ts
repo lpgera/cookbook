@@ -21,7 +21,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn('updatedAt', 'timestamp(3)', (col) => col.notNull())
     .addColumn('recipeId', 'integer', (col) =>
-      col.notNull().references('Recipe.id').onDelete('cascade')
+      col
+        .notNull()
+        .references('Recipe.id')
+        .onDelete('cascade')
+        .onUpdate('cascade')
     )
     .addColumn('name', 'varchar(511)')
     .execute()
@@ -34,7 +38,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn('updatedAt', 'timestamp(3)', (col) => col.notNull())
     .addColumn('groupId', 'integer', (col) =>
-      col.notNull().references('IngredientGroup.id').onDelete('cascade')
+      col
+        .notNull()
+        .references('IngredientGroup.id')
+        .onDelete('cascade')
+        .onUpdate('cascade')
     )
     .addColumn('name', 'varchar(511)', (col) => col.notNull())
     .addColumn('amount', 'varchar(511)', (col) => col.notNull())
@@ -66,15 +74,21 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   await db.schema
     .createTable('_CategoryToRecipe')
-    .addColumn('A', 'integer', (col) => col.notNull().references('Category.id'))
-    .addColumn('B', 'integer', (col) => col.notNull().references('Recipe.id'))
-    .execute()
-
-  await db.schema
-    .createIndex('_CategoryToRecipe_AB_unique')
-    .on('_CategoryToRecipe')
-    .columns(['A', 'B'])
-    .unique()
+    .addColumn('A', 'integer', (col) =>
+      col
+        .notNull()
+        .references('Category.id')
+        .onDelete('cascade')
+        .onUpdate('cascade')
+    )
+    .addColumn('B', 'integer', (col) =>
+      col
+        .notNull()
+        .references('Recipe.id')
+        .onDelete('cascade')
+        .onUpdate('cascade')
+    )
+    .addPrimaryKeyConstraint('_CategoryToRecipe_AB_pkey', ['A', 'B'])
     .execute()
 
   await db.schema
@@ -86,7 +100,6 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropIndex('_CategoryToRecipe_B_index').execute()
-  await db.schema.dropIndex('_CategoryToRecipe_AB_unique').execute()
   await db.schema.dropTable('_CategoryToRecipe').execute()
   await db.schema.dropTable('Category').execute()
   await db.schema.dropIndex('Ingredient_unit_idx').execute()
