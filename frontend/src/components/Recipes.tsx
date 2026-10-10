@@ -2,13 +2,26 @@ import React, { useCallback } from 'react'
 import { useParams, Link as RouterLink, useSearchParams } from 'react-router'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
-import { Fab, Grid } from '@mui/material'
+import { Box, Fab, Grid, Typography } from '@mui/material'
 import { Add, Search, ShoppingCart } from '@mui/icons-material'
 import { RecipesQuery, RecipesQueryVariables } from './Recipes.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
 import Categories from './Categories'
 import RecipeListCard from './RecipeListCard'
+import LetterRail, { letterAnchorId } from './LetterRail'
+
+const collator = new Intl.Collator(undefined, { sensitivity: 'base' })
+
+const letterOf = (name: string) => {
+  const letter = name
+    .trim()
+    .charAt(0)
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toUpperCase()
+  return /\p{L}/u.test(letter) ? letter : '#'
+}
 
 function Recipes() {
   const { category } = useParams()
@@ -58,33 +71,60 @@ function Recipes() {
     return <Loading />
   }
 
-  const recipes = data?.recipes ?? []
+  const recipes = [...(data?.recipes ?? [])].sort((a, b) =>
+    collator.compare(a.name, b.name)
+  )
+  const groups = new Map<string, typeof recipes>()
+  for (const r of recipes) {
+    const letter = letterOf(r.name)
+    groups.set(letter, [...(groups.get(letter) ?? []), r])
+  }
 
   return (
     <>
-      <Categories />
-      <Grid container spacing={4}>
-        {recipes.map((r, index) => (
-          <RecipeListCard
-            recipe={r}
-            isChecked={selectedRecipes.includes(r.id)}
-            onCheckedChange={(e) => {
-              if (e.target.checked) {
-                setSelectedRecipes([...selectedRecipes, r.id])
-              } else {
-                setSelectedRecipes(selectedRecipes.filter((id) => id !== r.id))
-              }
-            }}
-            key={index}
-          />
-        ))}
-      </Grid>
+      <Box sx={{ pr: { xs: 1.5, lg: 0 } }}>
+        <Categories />
+        <Grid container spacing={4}>
+          {[...groups].map(([letter, groupRecipes]) => (
+            <React.Fragment key={letter}>
+              <Grid size={12} sx={{ mb: -3 }}>
+                <Typography
+                  id={letterAnchorId(letter)}
+                  variant="overline"
+                  component="h2"
+                  color="text.secondary"
+                  sx={{ scrollMarginTop: 80 }}
+                >
+                  {letter}
+                </Typography>
+              </Grid>
+              {groupRecipes.map((r) => (
+                <RecipeListCard
+                  recipe={r}
+                  isChecked={selectedRecipes.includes(r.id)}
+                  onCheckedChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedRecipes([...selectedRecipes, r.id])
+                    } else {
+                      setSelectedRecipes(
+                        selectedRecipes.filter((id) => id !== r.id)
+                      )
+                    }
+                  }}
+                  key={r.id}
+                />
+              ))}
+            </React.Fragment>
+          ))}
+        </Grid>
+      </Box>
+      <LetterRail letters={[...groups.keys()]} />
       {selectedRecipes.length > 0 ? (
         <Fab
           style={{
             position: 'fixed',
             bottom: 168,
-            right: 24,
+            right: 40,
           }}
           color="secondary"
           component={RouterLink}
@@ -101,7 +141,7 @@ function Recipes() {
         style={{
           position: 'fixed',
           bottom: 96,
-          right: 24,
+          right: 40,
         }}
         color="secondary"
         href={'/new'}
@@ -113,7 +153,7 @@ function Recipes() {
         style={{
           position: 'fixed',
           bottom: 24,
-          right: 24,
+          right: 40,
         }}
         color="secondary"
         href={'/search'}

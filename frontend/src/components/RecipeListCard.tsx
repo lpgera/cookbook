@@ -28,19 +28,18 @@ const RecipeListCard = ({
 }) => {
   return (
     <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-      <Card>
+      <Card sx={{ height: '100%' }}>
         <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
               display: 'flex',
               flexDirection: 'row',
-              alignItems: 'center',
+              alignItems: 'flex-start',
             }}
           >
             <Typography
               variant="h5"
-              style={{ overflow: 'ellipsis', flexGrow: 1 }}
-              noWrap
+              style={{ overflowWrap: 'anywhere', flexGrow: 1 }}
             >
               <Link href={`/${recipe.id}`}>{recipe.name}</Link>
             </Typography>
@@ -55,11 +54,7 @@ const RecipeListCard = ({
               />
             ) : null}
           </div>
-          <Typography
-            style={{ overflow: 'ellipsis', height: 24 }}
-            noWrap
-            variant="body2"
-          >
+          <Typography style={{ height: 24 }} noWrap variant="body2">
             {recipe.description}
           </Typography>
           {recipe.categories.length ? (
