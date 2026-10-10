@@ -54,6 +54,7 @@ const Login = () => {
                 size={'small'}
                 type={'password'}
                 label={'Password'}
+                autoFocus
                 error={error}
                 onChange={(e) => setPassword(e.currentTarget.value)}
               />

@@ -12,7 +12,10 @@ import Loading from './utils/Loading'
 const ShoppingList = () => {
   const [searchParams] = useSearchParams()
   const recipes = searchParams.get('recipes') ?? ''
-  const ids = recipes.split(',').map(Number)
+  const ids = recipes
+    .split(',')
+    .map(Number)
+    .filter((id) => Number.isInteger(id) && id > 0 && id < 2 ** 31)
   const { data } = useQuery<ShoppingListQuery, ShoppingListQueryVariables>(
     gql`
       query ShoppingList($ids: [Int!]!) {
@@ -36,10 +39,11 @@ const ShoppingList = () => {
       variables: {
         ids,
       },
+      skip: !ids.length,
     }
   )
 
-  if (!data) {
+  if (ids.length && !data) {
     return <Loading />
   }
 

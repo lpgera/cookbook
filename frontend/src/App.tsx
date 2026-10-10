@@ -12,6 +12,7 @@ import useApolloClient from './hooks/useApolloClient'
 import useAuth from './hooks/useAuth'
 import ShoppingList from './components/ShoppingList'
 import Search from './components/Search'
+import Error from './components/utils/Error'
 
 function App() {
   const [token] = useAuth()
@@ -31,6 +32,7 @@ function App() {
               <Route path=":id/edit" element={<RecipeEdit />} />
               <Route path="shopping-list" element={<ShoppingList />} />
               <Route path="search" element={<Search />} />
+              <Route path="*" element={<Error message="Page not found" />} />
             </Routes>
           </Container>
         ) : (

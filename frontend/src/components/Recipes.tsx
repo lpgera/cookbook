@@ -1,9 +1,5 @@
 import React, { useCallback } from 'react'
-import {
-  useParams,
-  Link as RouterLink,
-  useSearchParams,
-} from 'react-router'
+import { useParams, Link as RouterLink, useSearchParams } from 'react-router'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { Fab, Grid } from '@mui/material'
@@ -24,11 +20,14 @@ function Recipes() {
       if (!recipes.length) {
         setSearchParams({})
       } else {
-        setSearchParams({
-          recipes: recipes.join(','),
-        }, {
-          replace: true,
-        })
+        setSearchParams(
+          {
+            recipes: recipes.join(','),
+          },
+          {
+            replace: true,
+          }
+        )
       }
     },
     [setSearchParams]
@@ -118,7 +117,7 @@ function Recipes() {
         }}
         color="secondary"
         href={'/search'}
-        aria-label="searhc"
+        aria-label="search"
       >
         <Search />
       </Fab>

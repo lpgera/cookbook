@@ -49,6 +49,9 @@ const RecipeListCard = ({
                 size="small"
                 checked={isChecked}
                 onChange={onCheckedChange}
+                slotProps={{
+                  input: { 'aria-label': `Select ${recipe.name}` },
+                }}
               />
             ) : null}
           </div>

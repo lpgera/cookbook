@@ -67,6 +67,21 @@ function toRecipeName(name: string) {
 const toContainsPattern = (query: string) =>
   `%${query.replace(/[\\%_]/g, '\\$&')}%`
 
+const containsIgnoringAccents = (column: string, pattern: string) =>
+  sql<boolean>`unaccent(${sql.ref(column)}) ilike unaccent(${pattern})`
+
+function toCategoryNames(categories: string[]) {
+  const namesByLowerCaseName = new Map<string, string>()
+  for (const category of categories) {
+    const name = category.trim()
+    const lowerCaseName = name.toLowerCase()
+    if (name && !namesByLowerCaseName.has(lowerCaseName)) {
+      namesByLowerCaseName.set(lowerCaseName, name)
+    }
+  }
+  return [...namesByLowerCaseName.values()]
+}
+
 async function upsertRecipeCategories({
   recipeId,
   categories,
@@ -76,40 +91,44 @@ async function upsertRecipeCategories({
   categories: string[]
   trx: typeof db
 }) {
-  for (const categoryName of categories) {
-    const existingCategory = await trx
+  for (const categoryName of toCategoryNames(categories)) {
+    let category = await trx
       .selectFrom('Category')
       .selectAll()
-      .where('name', '=', categoryName)
+      .where(sql<boolean>`lower(name) = lower(${categoryName})`)
       .executeTakeFirst()
 
-    if (existingCategory) {
+    if (!category) {
       await trx
-        .insertInto('RecipeCategory')
-        .values({
-          categoryId: existingCategory.id,
-          recipeId,
-        })
-        .execute()
-    } else {
-      const newCategory = await trx
         .insertInto('Category')
         .values({
           name: categoryName,
         })
-        .returningAll()
-        .executeTakeFirstOrThrow()
-
-      await trx
-        .insertInto('RecipeCategory')
-        .values({
-          categoryId: newCategory.id,
-          recipeId,
-        })
+        .onConflict((oc) => oc.column('name').doNothing())
         .execute()
+
+      category = await trx
+        .selectFrom('Category')
+        .selectAll()
+        .where('name', '=', categoryName)
+        .executeTakeFirstOrThrow()
     }
+
+    await trx
+      .insertInto('RecipeCategory')
+      .values({
+        categoryId: category.id,
+        recipeId,
+      })
+      .onConflict((oc) => oc.doNothing())
+      .execute()
   }
 }
+
+const recipeNotFound = () =>
+  new GraphQLError('Recipe not found', {
+    extensions: { code: 'NOT_FOUND' },
+  })
 
 const resolvers: Resolvers = {
   Date: new GraphQLScalarType<Date, string>({
@@ -230,7 +249,7 @@ const resolvers: Resolvers = {
         .selectAll('Recipe')
         .where((eb) =>
           eb.or([
-            eb('Recipe.name', 'ilike', pattern),
+            containsIgnoringAccents('Recipe.name', pattern),
             eb.exists(
               eb
                 .selectFrom('Ingredient')
@@ -241,7 +260,7 @@ const resolvers: Resolvers = {
                 )
                 .select('Ingredient.id')
                 .whereRef('IngredientGroup.recipeId', '=', 'Recipe.id')
-                .where('Ingredient.name', 'ilike', pattern)
+                .where(containsIgnoringAccents('Ingredient.name', pattern))
             ),
           ])
         )
@@ -312,7 +331,7 @@ const resolvers: Resolvers = {
             updatedAt: sql`CURRENT_TIMESTAMP`,
           })
           .returningAll()
-          .executeTakeFirstOrThrow()
+          .executeTakeFirstOrThrow(recipeNotFound)
 
         await insertIngredientsAndGroups({
           recipeId,
@@ -330,13 +349,18 @@ const resolvers: Resolvers = {
 
         return updatedRecipe
       }),
-    deleteRecipe: async (_, { id }) => {
-      await db.transaction().execute(async (trx) => {
-        await trx.deleteFrom('Recipe').where('id', '=', id).execute()
+    deleteRecipe: (_, { id }) =>
+      db.transaction().execute(async (trx) => {
+        const deletedRecipe = await trx
+          .deleteFrom('Recipe')
+          .where('id', '=', id)
+          .returningAll()
+          .executeTakeFirstOrThrow(recipeNotFound)
 
         await deleteOrphanCategories({ trx })
-      })
-    },
+
+        return deletedRecipe
+      }),
   },
 }
 

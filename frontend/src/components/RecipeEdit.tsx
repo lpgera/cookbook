@@ -44,6 +44,7 @@ const RecipeEdit = () => {
       variables: {
         id,
       },
+      skip: Number.isNaN(id),
       fetchPolicy: 'network-only',
       nextFetchPolicy: 'network-only',
     }
@@ -101,7 +102,9 @@ const RecipeEdit = () => {
     return <Loading />
   }
   if (error || !data?.recipe) {
-    return <Error message={error?.message} />
+    return (
+      <Error message={Number.isNaN(id) ? 'Page not found' : error?.message} />
+    )
   }
 
   return (

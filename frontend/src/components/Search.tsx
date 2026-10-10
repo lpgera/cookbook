@@ -61,6 +61,13 @@ const Search = () => {
               autoFocus
               fullWidth
               defaultValue={queryFromParams}
+              helperText={
+                query.length < 3
+                  ? 'Type at least 3 characters to search'
+                  : !loading && data?.search.length === 0
+                    ? 'No recipes found'
+                    : ''
+              }
               onChange={(event) => debouncedOnQueryChange(event.target.value)}
             />
           </CardContent>
