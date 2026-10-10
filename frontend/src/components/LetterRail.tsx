@@ -4,7 +4,25 @@ import { Box, ButtonBase } from '@mui/material'
 export const letterAnchorId = (letter: string) =>
   `letter-${letter === '#' ? 'other' : letter}`
 
+// Auto-hiding (overlay) scroll bars take up no layout space and appear on top
+// of the rail when scrolling with a mouse or trackpad, so leave room for them.
+const getScrollbarGap = () => {
+  if (!window.matchMedia('(pointer: fine)').matches) {
+    return 0
+  }
+  const probe = document.createElement('div')
+  probe.style.cssText =
+    'position:absolute;top:-999px;width:50px;height:50px;overflow:scroll'
+  document.body.appendChild(probe)
+  const isOverlay = probe.offsetWidth === probe.clientWidth
+  probe.remove()
+  return isOverlay ? 16 : 0
+}
+
+export const useScrollbarGap = () => useState(getScrollbarGap)[0]
+
 const LetterRail = ({ letters }: { letters: string[] }) => {
+  const scrollbarGap = useScrollbarGap()
   const [active, setActive] = useState<string | null>(null)
 
   const jumpTo = (letter: string) => {
@@ -77,8 +95,8 @@ const LetterRail = ({ letters }: { letters: string[] }) => {
         position: 'fixed',
         top: { xs: 56, sm: 64 },
         bottom: 0,
-        right: 0,
-        width: 24,
+        right: scrollbarGap,
+        width: 28,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -95,7 +113,7 @@ const LetterRail = ({ letters }: { letters: string[] }) => {
           onClick={() => jumpTo(letter)}
           sx={{
             typography: 'caption',
-            fontSize: 11,
+            fontSize: `clamp(9px, calc((100dvh - 64px) / ${letters.length} * 0.62), 15px)`,
             lineHeight: 1.45,
             fontWeight: letter === active ? 'bold' : 'medium',
             color: letter === active ? 'secondary.main' : 'text.secondary',

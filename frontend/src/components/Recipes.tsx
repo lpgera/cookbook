@@ -9,7 +9,7 @@ import Loading from './utils/Loading'
 import Error from './utils/Error'
 import Categories from './Categories'
 import RecipeListCard from './RecipeListCard'
-import LetterRail, { letterAnchorId } from './LetterRail'
+import LetterRail, { letterAnchorId, useScrollbarGap } from './LetterRail'
 
 const collator = new Intl.Collator(undefined, { sensitivity: 'base' })
 
@@ -25,6 +25,7 @@ const letterOf = (name: string) => {
 
 function Recipes() {
   const { category } = useParams()
+  const scrollbarGap = useScrollbarGap()
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedRecipes =
     searchParams.get('recipes')?.split(',').filter(Boolean).map(Number) ?? []
@@ -82,7 +83,7 @@ function Recipes() {
 
   return (
     <>
-      <Box sx={{ pr: { xs: 1.5, lg: 0 } }}>
+      <Box sx={{ pr: { xs: `${12 + scrollbarGap}px`, xl: 0 } }}>
         <Categories />
         <Grid container spacing={4}>
           {[...groups].map(([letter, groupRecipes]) => (
@@ -124,7 +125,7 @@ function Recipes() {
           style={{
             position: 'fixed',
             bottom: 168,
-            right: 40,
+            right: 40 + scrollbarGap,
           }}
           color="secondary"
           component={RouterLink}
@@ -141,7 +142,7 @@ function Recipes() {
         style={{
           position: 'fixed',
           bottom: 96,
-          right: 40,
+          right: 40 + scrollbarGap,
         }}
         color="secondary"
         href={'/new'}
@@ -153,7 +154,7 @@ function Recipes() {
         style={{
           position: 'fixed',
           bottom: 24,
-          right: 40,
+          right: 40 + scrollbarGap,
         }}
         color="secondary"
         href={'/search'}
