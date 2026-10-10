@@ -18,6 +18,8 @@ const Search = () => {
     setQuery(query)
   }, 300)
 
+  const trimmedQuery = query.trim()
+
   const { data, loading } = useQuery<SearchQuery, SearchQueryVariables>(
     gql`
       query Search($query: String!) {
@@ -41,9 +43,9 @@ const Search = () => {
     `,
     {
       variables: {
-        query,
+        query: trimmedQuery,
       },
-      skip: query.length < 3,
+      skip: trimmedQuery.length < 3,
     }
   )
 
@@ -62,7 +64,7 @@ const Search = () => {
               fullWidth
               defaultValue={queryFromParams}
               helperText={
-                query.length < 3
+                trimmedQuery.length < 3
                   ? 'Type at least 3 characters to search'
                   : !loading && data?.search.length === 0
                     ? 'No recipes found'

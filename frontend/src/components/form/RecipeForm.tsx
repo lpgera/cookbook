@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Control, FormState, UseFormRegister } from 'react-hook-form'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
@@ -29,6 +29,8 @@ const RecipeForm = ({
       categories
     }
   `)
+  const [isErrorOpen, setIsErrorOpen] = useState(false)
+  useEffect(() => setIsErrorOpen(!!error), [error])
 
   return (
     <form onSubmit={onSubmit}>
@@ -77,7 +79,10 @@ const RecipeForm = ({
         <TextField
           size="small"
           margin="normal"
-          {...register('instructions', { required: 'Required' })}
+          {...register('instructions', {
+            required: true,
+            validate: (instructions) => !!instructions.trim(),
+          })}
           label={'Instructions'}
           error={!!formState.errors.instructions}
           minRows={3}
@@ -86,12 +91,16 @@ const RecipeForm = ({
         />
       </div>
       <Snackbar
-        open={!!error}
+        open={isErrorOpen}
         style={{
           marginRight: 100,
         }}
       >
-        <Alert severity="error" variant="filled">
+        <Alert
+          severity="error"
+          variant="filled"
+          onClose={() => setIsErrorOpen(false)}
+        >
           Could not save the recipe: {error}
         </Alert>
       </Snackbar>
@@ -103,7 +112,7 @@ const RecipeForm = ({
         }}
         color="secondary"
         aria-label="save"
-        onClick={onSubmit}
+        type="submit"
         disabled={formState.isSubmitting}
       >
         <Save />

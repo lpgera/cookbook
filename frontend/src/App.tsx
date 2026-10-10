@@ -1,5 +1,6 @@
 import React from 'react'
-import { Route, HashRouter as Router, Routes } from 'react-router'
+import { createHashRouter, Outlet } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 import { ApolloProvider } from '@apollo/client/react'
 import Container from '@mui/material/Container'
 import Recipes from './components/Recipes'
@@ -15,34 +16,48 @@ import Search from './components/Search'
 import Error from './components/utils/Error'
 import UpdatePrompt from './components/UpdatePrompt'
 
-function App() {
+function Layout() {
   const [token] = useAuth()
+
+  return (
+    <>
+      <AppBar />
+      {token ? (
+        <Container sx={{ pb: 12 }}>
+          <Outlet />
+        </Container>
+      ) : (
+        <Container maxWidth={'xs'}>
+          <Login />
+        </Container>
+      )}
+      <UpdatePrompt />
+    </>
+  )
+}
+
+const router = createHashRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: '/', element: <Recipes /> },
+      { path: 'category/:category', element: <Recipes /> },
+      { path: 'new', element: <RecipeAdd /> },
+      { path: ':id', element: <Recipe /> },
+      { path: ':id/edit', element: <RecipeEdit /> },
+      { path: 'shopping-list', element: <ShoppingList /> },
+      { path: 'search', element: <Search /> },
+      { path: '*', element: <Error message="Page not found" /> },
+    ],
+  },
+])
+
+function App() {
   const client = useApolloClient()
 
   return (
     <ApolloProvider client={client}>
-      <Router useTransitions={false}>
-        <AppBar />
-        {token ? (
-          <Container sx={{ pb: 12 }}>
-            <Routes>
-              <Route path="/" element={<Recipes />} />
-              <Route path="category/:category" element={<Recipes />} />
-              <Route path="new" element={<RecipeAdd />} />
-              <Route path=":id" element={<Recipe />} />
-              <Route path=":id/edit" element={<RecipeEdit />} />
-              <Route path="shopping-list" element={<ShoppingList />} />
-              <Route path="search" element={<Search />} />
-              <Route path="*" element={<Error message="Page not found" />} />
-            </Routes>
-          </Container>
-        ) : (
-          <Container maxWidth={'xs'}>
-            <Login />
-          </Container>
-        )}
-        <UpdatePrompt />
-      </Router>
+      <RouterProvider router={router} useTransitions={false} />
     </ApolloProvider>
   )
 }

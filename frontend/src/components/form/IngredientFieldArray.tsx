@@ -32,11 +32,7 @@ const IngredientFieldArray = ({
   return (
     <Stack spacing={1}>
       {fields.map((field, index) => (
-        <Grid
-          container
-          spacing={1}
-          key={field.id}
-        >
+        <Grid container spacing={1} key={field.id}>
           <Grid>
             <TextField
               size="small"
@@ -60,7 +56,10 @@ const IngredientFieldArray = ({
             <ControlledAutocompleteField
               name={`ingredientGroups.${groupIndex}.ingredients.${index}.name`}
               label="Ingredient name"
-              rules={{ required: true }}
+              rules={{
+                required: true,
+                validate: (name) => !!String(name).trim(),
+              }}
               error={
                 !!formState.errors.ingredientGroups?.[groupIndex]
                   ?.ingredients?.[index]?.name

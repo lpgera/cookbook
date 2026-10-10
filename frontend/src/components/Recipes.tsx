@@ -85,6 +85,13 @@ function Recipes() {
     <>
       <Box sx={{ pr: { xs: `${12 + scrollbarGap}px`, xl: 0 } }}>
         <Categories />
+        {recipes.length === 0 ? (
+          <Typography color="text.secondary">
+            {category
+              ? `No recipes in the "${category}" category`
+              : 'No recipes yet'}
+          </Typography>
+        ) : null}
         <Grid container spacing={4}>
           {[...groups].map(([letter, groupRecipes]) => (
             <React.Fragment key={letter}>

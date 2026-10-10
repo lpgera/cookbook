@@ -5,9 +5,11 @@ import { useSearchParams } from 'react-router'
 const CategoryChip = ({
   category,
   href,
+  isSelected = false,
 }: {
   category: string
   href?: string
+  isSelected?: boolean
 }) => {
   const [searchParams] = useSearchParams()
   const recipes = searchParams.get('recipes')
@@ -17,7 +19,8 @@ const CategoryChip = ({
   return (
     <Chip
       label={category}
-      color="primary"
+      color={isSelected ? 'secondary' : 'primary'}
+      aria-current={isSelected ? 'page' : undefined}
       size="small"
       component={Link}
       clickable

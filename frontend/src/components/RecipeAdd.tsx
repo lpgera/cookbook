@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { gql } from '@apollo/client'
 import { useMutation } from '@apollo/client/react'
@@ -10,10 +10,14 @@ import {
   AddRecipeMutationVariables,
 } from './RecipeAdd.types.gen'
 import FormData from './form/FormData.type'
+import useUnsavedChangesPrompt from '../hooks/useUnsavedChangesPrompt'
 
 const RecipeAdd = () => {
   const { control, register, formState, handleSubmit } = useForm<FormData>({
     defaultValues: {
+      name: '',
+      description: '',
+      instructions: '',
       categories: [],
       ingredientGroups: [
         {
@@ -39,6 +43,9 @@ const RecipeAdd = () => {
       }
     }
   `)
+  const isSaved = useRef(false)
+  const { isDirty } = formState
+  useUnsavedChangesPrompt(() => isDirty && !isSaved.current)
   const navigate = useNavigate()
 
   const onSubmit = async (recipe: FormData) => {
@@ -51,6 +58,7 @@ const RecipeAdd = () => {
     } catch {
       return
     }
+    isSaved.current = true
     navigate('/', { replace: true })
   }
 

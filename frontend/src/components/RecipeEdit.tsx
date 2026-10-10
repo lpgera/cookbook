@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import React, { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router'
 import { gql } from '@apollo/client'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { useForm } from 'react-hook-form'
@@ -13,10 +13,11 @@ import {
 import FormData from './form/FormData.type'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
+import useRecipeId from '../hooks/useRecipeId'
+import useUnsavedChangesPrompt from '../hooks/useUnsavedChangesPrompt'
 
 const RecipeEdit = () => {
-  const { id: rawId } = useParams()
-  const id = parseInt(rawId ?? '0')
+  const id = useRecipeId()
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
     gql`
       query Recipe($id: Int!) {
@@ -72,6 +73,9 @@ const RecipeEdit = () => {
       ),
     })
   }, [data, reset])
+  const isSaved = useRef(false)
+  const { isDirty } = formState
+  useUnsavedChangesPrompt(() => isDirty && !isSaved.current)
   const navigate = useNavigate()
   const [updateRecipe, { error: saveError }] = useMutation<
     UpdateRecipeMutation,
@@ -95,6 +99,7 @@ const RecipeEdit = () => {
     } catch {
       return
     }
+    isSaved.current = true
     navigate(`/${id}`, { replace: true })
   }
 

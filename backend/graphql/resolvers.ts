@@ -28,7 +28,7 @@ async function insertIngredientsAndGroups({
         .insertInto('Ingredient')
         .values(
           group.ingredients.map((ingredient, index) => ({
-            name: ingredient.name,
+            name: toRequiredText(ingredient.name, 'Ingredient name'),
             amount: ingredient.amount,
             unit: ingredient.unit,
             order: index,
@@ -54,18 +54,18 @@ const deleteOrphanCategories = ({ trx }: { trx: typeof db }) =>
     )
     .execute()
 
-function toRecipeName(name: string) {
-  const trimmedName = name.trim()
-  if (!trimmedName) {
-    throw new GraphQLError('Recipe name is required', {
+function toRequiredText(text: string, label: string) {
+  const trimmedText = text.trim()
+  if (!trimmedText) {
+    throw new GraphQLError(`${label} is required`, {
       extensions: { code: 'BAD_USER_INPUT' },
     })
   }
-  return trimmedName
+  return trimmedText
 }
 
 const toContainsPattern = (query: string) =>
-  `%${query.replace(/[\\%_]/g, '\\$&')}%`
+  `%${query.trim().replace(/[\\%_]/g, '\\$&')}%`
 
 const containsIgnoringAccents = (column: string, pattern: string) =>
   sql<boolean>`unaccent(${sql.ref(column)}) ilike unaccent(${pattern})`
@@ -204,7 +204,7 @@ const resolvers: Resolvers = {
         ? queryFilteredByIds
             .innerJoin('RecipeCategory', 'RecipeCategory.recipeId', 'Recipe.id')
             .innerJoin('Category', 'Category.id', 'RecipeCategory.categoryId')
-            .where('Category.name', '=', category)
+            .where(sql<boolean>`lower("Category"."name") = lower(${category})`)
         : queryFilteredByIds
 
       return queryFilteredByCategory.distinct().execute()
@@ -288,9 +288,9 @@ const resolvers: Resolvers = {
         const insertedRecipe = await trx
           .insertInto('Recipe')
           .values({
-            name: toRecipeName(recipe.name),
+            name: toRequiredText(recipe.name, 'Recipe name'),
             description: recipe.description,
-            instructions: recipe.instructions,
+            instructions: toRequiredText(recipe.instructions, 'Instructions'),
           })
           .returningAll()
           .executeTakeFirstOrThrow()
@@ -325,9 +325,9 @@ const resolvers: Resolvers = {
           .updateTable('Recipe')
           .where('id', '=', recipeId)
           .set({
-            name: toRecipeName(recipe.name),
+            name: toRequiredText(recipe.name, 'Recipe name'),
             description: recipe.description,
-            instructions: recipe.instructions,
+            instructions: toRequiredText(recipe.instructions, 'Instructions'),
             updatedAt: sql`CURRENT_TIMESTAMP`,
           })
           .returningAll()

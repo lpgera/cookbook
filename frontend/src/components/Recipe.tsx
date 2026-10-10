@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate } from 'react-router'
 import { gql } from '@apollo/client'
 import { useMutation, useQuery } from '@apollo/client/react'
 import ReactMarkdown from 'react-markdown'
@@ -9,6 +9,7 @@ import { RecipeQuery, RecipeQueryVariables } from './Recipe.types.gen'
 import Loading from './utils/Loading'
 import Error from './utils/Error'
 import CategoryChip from './CategoryChip'
+import useRecipeId from '../hooks/useRecipeId'
 
 const ActionMenu = ({ id }: { id: number }) => {
   const navigate = useNavigate()
@@ -60,8 +61,7 @@ const ActionMenu = ({ id }: { id: number }) => {
 }
 
 const Recipe = () => {
-  const { id: rawId } = useParams()
-  const id = parseInt(rawId ?? '0')
+  const id = useRecipeId()
   const { loading, error, data } = useQuery<RecipeQuery, RecipeQueryVariables>(
     gql`
       query Recipe($id: Int!) {
@@ -104,7 +104,7 @@ const Recipe = () => {
   return (
     <>
       <Card>
-        <CardContent>
+        <CardContent sx={{ overflowWrap: 'anywhere' }}>
           <Box
             style={{
               display: 'flex',
