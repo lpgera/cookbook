@@ -18,7 +18,13 @@ app.use(compression())
 
 app.use(
   express.static(path.join(import.meta.dirname, 'frontend'), {
-    maxAge: '30 days',
+    setHeaders: (res, filePath) => {
+      const isHashedAsset = filePath.includes(`${path.sep}assets${path.sep}`)
+      res.setHeader(
+        'Cache-Control',
+        isHashedAsset ? 'public, max-age=31536000, immutable' : 'no-cache'
+      )
+    },
   })
 )
 

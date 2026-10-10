@@ -13,6 +13,7 @@ import useAuth from './hooks/useAuth'
 import ShoppingList from './components/ShoppingList'
 import Search from './components/Search'
 import Error from './components/utils/Error'
+import UpdatePrompt from './components/UpdatePrompt'
 
 function App() {
   const [token] = useAuth()
@@ -40,6 +41,7 @@ function App() {
             <Login />
           </Container>
         )}
+        <UpdatePrompt />
       </Router>
     </ApolloProvider>
   )
