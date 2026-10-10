@@ -20,7 +20,7 @@ function App() {
 
   return (
     <ApolloProvider client={client}>
-      <Router>
+      <Router useTransitions={false}>
         <AppBar />
         {token ? (
           <Container sx={{ pb: 12 }}>
