@@ -12,16 +12,11 @@ export type Generated<T> =
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>
 
-export interface _CategoryToRecipe {
-  A: number
-  B: number
-}
-
 export interface Category {
   createdAt: Generated<Timestamp>
   id: Generated<number>
   name: string
-  updatedAt: Timestamp
+  updatedAt: Generated<Timestamp>
 }
 
 export interface Ingredient {
@@ -32,7 +27,7 @@ export interface Ingredient {
   name: string
   order: number
   unit: string
-  updatedAt: Timestamp
+  updatedAt: Generated<Timestamp>
 }
 
 export interface IngredientGroup {
@@ -40,7 +35,7 @@ export interface IngredientGroup {
   id: Generated<number>
   name: string | null
   recipeId: number
-  updatedAt: Timestamp
+  updatedAt: Generated<Timestamp>
 }
 
 export interface Recipe {
@@ -49,13 +44,18 @@ export interface Recipe {
   id: Generated<number>
   instructions: string | null
   name: string
-  updatedAt: Timestamp
+  updatedAt: Generated<Timestamp>
+}
+
+export interface RecipeCategory {
+  categoryId: number
+  recipeId: number
 }
 
 export interface DB {
-  _CategoryToRecipe: _CategoryToRecipe
   Category: Category
   Ingredient: Ingredient
   IngredientGroup: IngredientGroup
   Recipe: Recipe
+  RecipeCategory: RecipeCategory
 }

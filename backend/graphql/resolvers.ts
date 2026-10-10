@@ -1,17 +1,16 @@
 import { GraphQLScalarType, Kind } from 'graphql'
 import jwt from 'jsonwebtoken'
+import { sql } from 'kysely'
 import db from '../kysely/db.ts'
 import type { IngredientGroupInput, Resolvers } from './resolvers.gen.ts'
 
 async function insertIngredientsAndGroups({
   recipeId,
   ingredientGroups,
-  date,
   trx,
 }: {
   recipeId: number
   ingredientGroups: IngredientGroupInput[]
-  date: Date
   trx: typeof db
 }) {
   for (const group of ingredientGroups) {
@@ -20,7 +19,6 @@ async function insertIngredientsAndGroups({
       .values({
         name: group.name,
         recipeId,
-        updatedAt: date,
       })
       .returningAll()
       .executeTakeFirstOrThrow()
@@ -34,7 +32,6 @@ async function insertIngredientsAndGroups({
           unit: ingredient.unit,
           order: index,
           groupId: insertedGroup.id,
-          updatedAt: date,
         }))
       )
       .execute()
@@ -47,24 +44,25 @@ const deleteOrphanCategories = ({ trx }: { trx: typeof db }) =>
     .where(({ not, exists, selectFrom }) =>
       not(
         exists(
-          selectFrom('_CategoryToRecipe')
+          selectFrom('RecipeCategory')
             .selectAll()
-            .whereRef('_CategoryToRecipe.A', '=', 'Category.id')
+            .whereRef('RecipeCategory.categoryId', '=', 'Category.id')
         )
       )
     )
     .execute()
 
+const toContainsPattern = (query: string) =>
+  `%${query.replace(/[\\%_]/g, '\\$&')}%`
+
 async function upsertRecipeCategories({
   recipeId,
   categories,
   trx,
-  date,
 }: {
   recipeId: number
   categories: string[]
   trx: typeof db
-  date: Date
 }) {
   for (const categoryName of categories) {
     const existingCategory = await trx
@@ -75,10 +73,10 @@ async function upsertRecipeCategories({
 
     if (existingCategory) {
       await trx
-        .insertInto('_CategoryToRecipe')
+        .insertInto('RecipeCategory')
         .values({
-          A: existingCategory.id,
-          B: recipeId,
+          categoryId: existingCategory.id,
+          recipeId,
         })
         .execute()
     } else {
@@ -86,16 +84,15 @@ async function upsertRecipeCategories({
         .insertInto('Category')
         .values({
           name: categoryName,
-          updatedAt: date,
         })
         .returningAll()
         .executeTakeFirstOrThrow()
 
       await trx
-        .insertInto('_CategoryToRecipe')
+        .insertInto('RecipeCategory')
         .values({
-          A: newCategory.id,
-          B: recipeId,
+          categoryId: newCategory.id,
+          recipeId,
         })
         .execute()
     }
@@ -140,6 +137,7 @@ const resolvers: Resolvers = {
         .selectFrom('Ingredient')
         .selectAll()
         .where('groupId', '=', groupId)
+        .orderBy('order', 'asc')
         .execute(),
   },
   Recipe: {
@@ -148,13 +146,14 @@ const resolvers: Resolvers = {
         .selectFrom('IngredientGroup')
         .selectAll()
         .where('recipeId', '=', recipeId)
+        .orderBy('id', 'asc')
         .execute(),
     categories: async ({ id: recipeId }) => {
       const categories = await db
         .selectFrom('Category')
-        .innerJoin('_CategoryToRecipe', '_CategoryToRecipe.A', 'Category.id')
+        .innerJoin('RecipeCategory', 'RecipeCategory.categoryId', 'Category.id')
         .select('Category.name')
-        .where('_CategoryToRecipe.B', '=', recipeId)
+        .where('RecipeCategory.recipeId', '=', recipeId)
         .execute()
       return categories.map((c) => c.name)
     },
@@ -164,16 +163,16 @@ const resolvers: Resolvers = {
       const baseQuery = db
         .selectFrom('Recipe')
         .selectAll('Recipe')
-        .orderBy('name', 'asc')
+        .orderBy('Recipe.name', 'asc')
 
       const queryFilteredByIds = ids?.length
-        ? baseQuery.where('id', 'in', ids)
+        ? baseQuery.where('Recipe.id', 'in', ids)
         : baseQuery
 
       const queryFilteredByCategory = category
         ? queryFilteredByIds
-            .innerJoin('_CategoryToRecipe', '_CategoryToRecipe.B', 'Recipe.id')
-            .innerJoin('Category', 'Category.id', '_CategoryToRecipe.A')
+            .innerJoin('RecipeCategory', 'RecipeCategory.recipeId', 'Recipe.id')
+            .innerJoin('Category', 'Category.id', 'RecipeCategory.categoryId')
             .where('Category.name', '=', category)
         : queryFilteredByIds
 
@@ -212,23 +211,28 @@ const resolvers: Resolvers = {
       return ingredients.map((i) => i.unit).filter(Boolean)
     },
     search: async (_, { query }) => {
+      const pattern = toContainsPattern(query)
+
       return db
         .selectFrom('Recipe')
         .selectAll('Recipe')
-        .innerJoin('IngredientGroup', 'IngredientGroup.recipeId', 'Recipe.id')
-        .innerJoin('Ingredient', 'Ingredient.groupId', 'IngredientGroup.id')
         .where((eb) =>
-          eb(
-            eb.fn<string>(`LOWER`, ['Recipe.name']),
-            'like',
-            `%${query.toLowerCase()}%`
-          ).or(
-            eb.fn<string>(`LOWER`, ['Ingredient.name']),
-            'like',
-            `%${query.toLowerCase()}%`
-          )
+          eb.or([
+            eb('Recipe.name', 'ilike', pattern),
+            eb.exists(
+              eb
+                .selectFrom('Ingredient')
+                .innerJoin(
+                  'IngredientGroup',
+                  'IngredientGroup.id',
+                  'Ingredient.groupId'
+                )
+                .select('Ingredient.id')
+                .whereRef('IngredientGroup.recipeId', '=', 'Recipe.id')
+                .where('Ingredient.name', 'ilike', pattern)
+            ),
+          ])
         )
-        .distinct()
         .orderBy('Recipe.name', 'asc')
         .execute()
     },
@@ -250,14 +254,12 @@ const resolvers: Resolvers = {
     },
     addRecipe: (_, { recipe }) =>
       db.transaction().execute(async (trx) => {
-        const date = new Date()
         const insertedRecipe = await trx
           .insertInto('Recipe')
           .values({
             name: recipe.name,
             description: recipe.description,
             instructions: recipe.instructions,
-            updatedAt: date,
           })
           .returningAll()
           .executeTakeFirstOrThrow()
@@ -265,14 +267,12 @@ const resolvers: Resolvers = {
         await insertIngredientsAndGroups({
           recipeId: insertedRecipe.id,
           ingredientGroups: recipe.ingredientGroups,
-          date,
           trx,
         })
 
         await upsertRecipeCategories({
           recipeId: insertedRecipe.id,
           categories: recipe.categories,
-          date,
           trx,
         })
 
@@ -280,16 +280,14 @@ const resolvers: Resolvers = {
       }),
     updateRecipe: async (_, { id: recipeId, recipe }) =>
       db.transaction().execute(async (trx) => {
-        const date = new Date()
-
         await trx
           .deleteFrom('IngredientGroup')
           .where('recipeId', '=', recipeId)
           .execute()
 
         await trx
-          .deleteFrom('_CategoryToRecipe')
-          .where('B', '=', recipeId)
+          .deleteFrom('RecipeCategory')
+          .where('recipeId', '=', recipeId)
           .execute()
 
         const updatedRecipe = await trx
@@ -299,7 +297,7 @@ const resolvers: Resolvers = {
             name: recipe.name,
             description: recipe.description,
             instructions: recipe.instructions,
-            updatedAt: date,
+            updatedAt: sql`CURRENT_TIMESTAMP`,
           })
           .returningAll()
           .executeTakeFirstOrThrow()
@@ -307,14 +305,12 @@ const resolvers: Resolvers = {
         await insertIngredientsAndGroups({
           recipeId,
           ingredientGroups: recipe.ingredientGroups,
-          date,
           trx,
         })
 
         await upsertRecipeCategories({
           recipeId,
           categories: recipe.categories,
-          date,
           trx,
         })
 

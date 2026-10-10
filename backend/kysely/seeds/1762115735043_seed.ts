@@ -1,13 +1,10 @@
 import kysely from '../db.ts'
 
 export async function seed(db: typeof kysely): Promise<void> {
-  const now = new Date()
-
   await db.transaction().execute(async (trx) => {
     const recipe = await trx
       .insertInto('Recipe')
       .values({
-        updatedAt: now,
         name: 'Scrambled eggs',
         description: 'An easy breakfast',
         instructions:
@@ -23,7 +20,6 @@ export async function seed(db: typeof kysely): Promise<void> {
     const ingredientGroup = await trx
       .insertInto('IngredientGroup')
       .values({
-        updatedAt: now,
         recipeId: recipe.id,
         name: '',
       })
@@ -35,7 +31,6 @@ export async function seed(db: typeof kysely): Promise<void> {
       .values([
         {
           groupId: ingredientGroup.id,
-          updatedAt: now,
           name: 'eggs',
           amount: '6',
           unit: 'pieces',
@@ -43,7 +38,6 @@ export async function seed(db: typeof kysely): Promise<void> {
         },
         {
           groupId: ingredientGroup.id,
-          updatedAt: now,
           name: 'olive oil',
           amount: 'a few',
           unit: 'drops',
@@ -51,7 +45,6 @@ export async function seed(db: typeof kysely): Promise<void> {
         },
         {
           groupId: ingredientGroup.id,
-          updatedAt: now,
           name: 'salt',
           amount: '1',
           unit: 'pinch',
@@ -59,7 +52,6 @@ export async function seed(db: typeof kysely): Promise<void> {
         },
         {
           groupId: ingredientGroup.id,
-          updatedAt: now,
           name: 'pepper',
           amount: '1',
           unit: 'pinch',
@@ -72,11 +64,9 @@ export async function seed(db: typeof kysely): Promise<void> {
       .insertInto('Category')
       .values([
         {
-          updatedAt: now,
           name: 'Breakfast',
         },
         {
-          updatedAt: now,
           name: 'Eggs',
         },
       ])
@@ -84,11 +74,11 @@ export async function seed(db: typeof kysely): Promise<void> {
       .execute()
 
     await trx
-      .insertInto('_CategoryToRecipe')
+      .insertInto('RecipeCategory')
       .values(
         categories.map((category) => ({
-          A: category.id,
-          B: recipe.id,
+          categoryId: category.id,
+          recipeId: recipe.id,
         }))
       )
       .execute()
