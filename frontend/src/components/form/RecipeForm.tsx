@@ -2,7 +2,7 @@ import React from 'react'
 import { Control, FormState, UseFormRegister } from 'react-hook-form'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
-import { Fab, TextField, Typography } from '@mui/material'
+import { Alert, Fab, Snackbar, TextField, Typography } from '@mui/material'
 import { Save } from '@mui/icons-material'
 import IngredientGroupFieldArray from './IngredientGroupFieldArray'
 import FormData from './FormData.type'
@@ -14,11 +14,13 @@ const RecipeForm = ({
   register,
   formState,
   onSubmit,
+  error,
 }: {
   control: Control<FormData>
   register: UseFormRegister<FormData>
   formState: FormState<FormData>
   onSubmit: () => Promise<any>
+  error?: string
 }) => {
   const { data } = useQuery<GlobalsQuery>(gql`
     query Globals {
@@ -80,6 +82,16 @@ const RecipeForm = ({
           fullWidth
         />
       </div>
+      <Snackbar
+        open={!!error}
+        style={{
+          marginRight: 100,
+        }}
+      >
+        <Alert severity="error" variant="filled">
+          Could not save the recipe: {error}
+        </Alert>
+      </Snackbar>
       <Fab
         style={{
           position: 'fixed',

@@ -40,7 +40,7 @@ const ControlledAutocompleteField = <T extends FieldValues>({
           freeSolo
           value={value}
           onBlur={onBlur}
-          onChange={(e, v) => onChange(v)}
+          onChange={(e, v) => onChange(v ?? '')}
           renderInput={(params) => (
             <TextField
               {...params}

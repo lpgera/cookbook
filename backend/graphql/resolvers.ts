@@ -23,18 +23,20 @@ async function insertIngredientsAndGroups({
       .returningAll()
       .executeTakeFirstOrThrow()
 
-    await trx
-      .insertInto('Ingredient')
-      .values(
-        group.ingredients.map((ingredient, index) => ({
-          name: ingredient.name,
-          amount: ingredient.amount,
-          unit: ingredient.unit,
-          order: index,
-          groupId: insertedGroup.id,
-        }))
-      )
-      .execute()
+    if (group.ingredients.length) {
+      await trx
+        .insertInto('Ingredient')
+        .values(
+          group.ingredients.map((ingredient, index) => ({
+            name: ingredient.name,
+            amount: ingredient.amount,
+            unit: ingredient.unit,
+            order: index,
+            groupId: insertedGroup.id,
+          }))
+        )
+        .execute()
+    }
   }
 }
 

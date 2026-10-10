@@ -72,7 +72,7 @@ const RecipeEdit = () => {
     })
   }, [data, reset])
   const navigate = useNavigate()
-  const [updateRecipe] = useMutation<
+  const [updateRecipe, { error: saveError }] = useMutation<
     UpdateRecipeMutation,
     UpdateRecipeMutationVariables
   >(gql`
@@ -84,12 +84,16 @@ const RecipeEdit = () => {
   `)
 
   const onSubmit = async (recipe: FormData) => {
-    await updateRecipe({
-      variables: {
-        id,
-        recipe,
-      },
-    })
+    try {
+      await updateRecipe({
+        variables: {
+          id,
+          recipe,
+        },
+      })
+    } catch {
+      return
+    }
     navigate(`/${id}`, { replace: true })
   }
 
@@ -109,6 +113,7 @@ const RecipeEdit = () => {
           register={register}
           formState={formState}
           onSubmit={handleSubmit(onSubmit)}
+          error={saveError?.message}
         />
       </CardContent>
     </Card>
